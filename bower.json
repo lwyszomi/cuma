@@ -1,0 +1,22 @@
+{
+  "name": "cuma",
+  "homepage": "https://github.com/lwyszomi/cuma",
+  "authors": [
+    "Łukasz Wyszomirski <lwyszomirski@soldevelo.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.0",
+    "bootstrap": "^3.3.7"
+  }
+}

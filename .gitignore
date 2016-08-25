@@ -89,3 +89,4 @@ ENV/
 .ropeproject
 
 .idea/
+bower_components/
