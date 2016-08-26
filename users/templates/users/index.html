@@ -9,6 +9,21 @@
     <title>Title</title>
 </head>
 <body>
-<div class="container">First Template</div>
+<div class="container">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.displayName }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
