@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block js %}
+            <script src='{% static "jquery/dist/jquery.min.js" %}'></script>
+            <script src='{% static "bootstrap/dist/js/bootstrap.min.js" %}'></script>
+        {% endblock js %}
+
+        {% block style %}
+            <link rel='stylesheet' type='text/css' href='{% static "users/css/base.css"%}'/>
+            <link rel='stylesheet' type='text/css' href='{% static "bootstrap/dist/css/bootstrap.css" %}'/>
+        {% endblock style %}
+
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <div class="header-bar" id="header">
+            <span class="header-text" id="headerText">User Management</span>
+        </div>
+        <div class="container">
+            {% block container %}
+            {% endblock container %}
+        </div>
+    </body>
+</html>

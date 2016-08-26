@@ -1,15 +1,5 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src='{% static "jquery/dist/jquery.min.js" %}'></script>
-    <script src='{% static "bootstrap/dist/js/bootstrap.min.js" %}'></script>
-    <link rel='stylesheet' type='text/css' href='{% static "bootstrap/dist/css/bootstrap.css" %}'/>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div class="container">
+{% extends "users/base_template.html" %}
+{% block container %}
     <table class="table table-bordered">
         <thead>
         <tr>
@@ -24,6 +14,4 @@
         {% endfor %}
         </tbody>
     </table>
-</div>
-</body>
-</html>
+{% endblock container %}
