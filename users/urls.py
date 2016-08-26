@@ -1,6 +1,7 @@
 from django.conf.urls import url
-from django.views.generic import TemplateView
+
+from users.views import UserListView
 
 urlpatterns = [
-    url(r'^', TemplateView.as_view(template_name="users/index.html")),
+    url(r'^', UserListView.as_view()),
 ]
