@@ -1,0 +1,26 @@
+.header-bar {
+    background-color: #276696;
+    height: 44px;
+    position: fixed;
+    z-index: 15;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 3px #222;
+}
+
+.header-text {
+    position: absolute;
+    top: 12px;
+    left: 175px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+    font-family: LiberationSans, arial, sans-serif;
+    line-height: 140%;
+}
+
+.container {
+    padding-top: 44px;
+    font-family: Roboto,arial,sans-serif;
+}
