@@ -26,7 +26,7 @@ class UserView(View):
         length = int(post.get('length', 10))
         start = int(post.get('start', 10))
         page = start / length + 1
-        users, total = queries.get_users(fields='id,displayName,userCredentials', page_size=length, page=page)
+        users, total = queries.get_users(fields='id,displayName,userCredentials[username]', page_size=length, page=page)
         return JsonResponse(data={
           "draw": int(post.get('draw', 0)) + 1,
           "recordsTotal": total,
