@@ -4,12 +4,14 @@
         <thead>
         <tr>
             <th>Name</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for user in users %}
             <tr>
                 <td>{{ user.displayName }}</td>
+                <td><a href="{% url 'show_user' user.id %}">Profile</a></td>
             </tr>
         {% endfor %}
         </tbody>

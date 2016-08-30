@@ -24,3 +24,9 @@
     padding-top: 44px;
     font-family: Roboto,arial,sans-serif;
 }
+
+.box {
+    margin: 5px;
+    border: 1px solid #eee;
+    padding: 5px;
+}

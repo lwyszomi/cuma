@@ -1,0 +1,74 @@
+{% extends "users/base_template.html" %}
+{% block container %}
+    <div>
+        <div class="user_details">
+            <h2>DHIS2 Details</h2>
+            <hr>
+            <h4>{{ user.displayName}}</h4>
+            {% if user.email %}
+                <span>{{ user.email }}</span></br>
+            {% endif %}
+            <span>
+                {% if user.userCredentials %}Active{% else %}Inactive{% endif %}
+            </span>
+        </div>
+        <div class="comet_profile">
+            <h2>COMET Profile</h2>
+            <hr>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="org_units" class="col-sm-2 control-label">Country & Org Units:</label>
+                    <div id="org_units" class="col-sm-10">
+                        {% for key, val in organizations.items %}
+                            <div class="col-sm-5 box">
+                                <h4>{{ key }}</h4>
+                                <ul>
+                                    {% for org in val %}
+                                        {% if org %}
+                                            <li>{{ org }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_roles" class="col-sm-2 control-label">User Roles:</label>
+                    <div id="user_roles" class="col-sm-10">
+                        <div class="box">
+                            Coming soon.
+                            {# TODO add roles #}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_groups" class="col-sm-2 control-label">User Groups:</label>
+                    <div id="user_groups" class="col-sm-10">
+                        <div class="box">
+                            <ul>
+                                {% for group in user.userGroups %}
+                                    <li>{{ group.displayName }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="user_roles" class="col-sm-2 control-label">Interface Language:</label>
+                    <div id="user_roles" class="col-sm-10">
+                        <div class="box">
+                            Coming soon.
+                            {# TODO: Add language#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock container %}
