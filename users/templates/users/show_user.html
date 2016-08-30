@@ -9,7 +9,7 @@
                 <span>{{ user.email }}</span></br>
             {% endif %}
             <span>
-                {% if user.userCredentials %}Active{% else %}Inactive{% endif %}
+                {% if not user.userCredentials.disabled %}Active{% else %}Inactive{% endif %}
             </span>
         </div>
         <div class="comet_profile">
