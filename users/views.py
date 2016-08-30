@@ -61,5 +61,5 @@ class ShowUserView(TemplateView):
                 org_dict[org['displayName']] = []
 
         kwargs['user'] = user
-        kwargs['organizations'] = org_dict
+        kwargs['organizations'] = dict(org_dict)
         return super(ShowUserView, self).get_context_data(**kwargs)
