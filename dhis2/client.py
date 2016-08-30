@@ -22,7 +22,13 @@ class DHIS2Client(object):
 
     def get_user(self, user_id):
         session = self.session
+        fields = [
+            ':all',
+            'userCredentials[disabled]',
+            'organisationUnits[displayName,level,ancestors[displayName,level]]',
+            'userGroups[displayName]'
+        ]
         response = session.get(self.url + 'users/%s.json' % user_id, params={
-            'fields': ':all,organisationUnits[displayName,level,ancestors[displayName,level]],userGroups[displayName]'
+            'fields': ','.join(fields)
         })
         return response.json()
