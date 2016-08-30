@@ -1,19 +1,46 @@
 {% extends "users/base_template.html" %}
+{% load static %}
+{% block js %}
+    {{ block.super }}
+        <script src='{% static "datatables/media/js/jquery.dataTables.min.js" %}'></script>
+    <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "bFilter": false,
+                "ajax": {
+                     "type": "POST",
+                     "url": "{% url 'users' %}"
+                },
+                "ordering": false,
+                "aoColumnDefs": [
+                    {
+                        "aTargets": [3],
+                        "mRender": function(data) {
+                            return '<a href="' + data + '">Profile</a>';
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+{% endblock js %}
+{% block style %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href='{% static "datatables/media/css/dataTables.bootstrap.min.css" %}'/>
+{% endblock style %}
 {% block container %}
-    <table class="table table-bordered">
+    <table id="datatable" class="table table-bordered">
         <thead>
-        <tr>
-            <th>Name</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
             <tr>
-                <td>{{ user.displayName }}</td>
-                <td><a href="{% url 'show_user' user.id %}">Profile</a></td>
+                <th>Name</th>
+                <th>Username</th>
+                <th>State</th>
+                <th>Actions</th>
             </tr>
-        {% endfor %}
-        </tbody>
+        </thead>
     </table>
 {% endblock container %}
+
+{#<a href="{% url 'show_user' user.id %}">#}
