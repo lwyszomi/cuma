@@ -3,28 +3,16 @@
 {% block js %}
     {{ block.super }}
         <script src='{% static "datatables/media/js/jquery.dataTables.min.js" %}'></script>
-    <script>
-        $(document).ready(function() {
-            $('#datatable').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "bFilter": false,
-                "ajax": {
-                     "type": "POST",
-                     "url": "{% url 'users' %}"
-                },
-                "ordering": false,
-                "aoColumnDefs": [
-                    {
-                        "aTargets": [3],
-                        "mRender": function(data) {
-                            return '<a href="' + data + '">Profile</a>';
-                        }
-                    }
-                ]
+        <script>
+            $(document).ready(function() {
+                var datatable = $('#datatable').DataTable({
+                    "columnDefs": [ {
+                        "orderable": false,
+                        "targets": 3
+                    }]
+                });
             });
-        });
-    </script>
+        </script>
 {% endblock js %}
 {% block style %}
     {{ block.super }}
@@ -40,7 +28,15 @@
                 <th>Actions</th>
             </tr>
         </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.displayName }}</td>
+                <td>{{ user.userCredentials.username }}</td>
+                <td>{% if not user.userCredentials.disabled %}Active{% else %}Inactive{% endif %}</td>
+                <td><a href="{% url 'show_user' user.id %}">Profile</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
     </table>
 {% endblock container %}
-
-{#<a href="{% url 'show_user' user.id %}">#}

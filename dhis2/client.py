@@ -14,11 +14,17 @@ class DHIS2Client(object):
         session.auth = (self.username, self.password)
         return session
 
-    def get_users(self, fields, page_size, page):
+
+    def get_users(self):
         session = self.session
-        response = session.get(self.url + 'users.json', params={'fields': fields, 'pageSize': page_size, 'page': page})
-        response_json = response.json()
-        return response_json['users'], response_json['pager']['total']
+        fields = [
+            'id',
+            'displayName',
+            'userCredentials[disabled,username]'
+        ]
+        response = session.get(self.url + 'users.json', params={'fields': ','.join(fields)})
+        return response.json()['users']
+
 
     def get_user(self, user_id):
         session = self.session
