@@ -1,0 +1,58 @@
+{% extends "users/base_template.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block js %} {{ block.super }}
+    <script src="{% static 'users/js/app.js' %}"></script>
+    <script src="{% static 'users/js/controllers/edit_controller.js' %}"></script>
+{% endblock %}
+
+{% block bread-crumb %}
+    <div class="top10">
+        <a class="nav-link" href="{% url 'users' %}"><i class="glyphicon glyphicon-chevron-left"></i> <span>{%  trans 'User Management' %}</span></a>
+    </div>
+{% endblock bread-crumb %}
+
+{% block container %}
+    <div class="user_details">
+        <h2>{{ user.displayName}}</h2>
+        <span>{{ user.userCredentials.username }}</span>
+        <hr>
+    </div>
+    <div class="user-edit-form" ng-app="cumaApp" ng-controller="editController as ctrl">
+        <div class="bread-crumb clearfix">
+            <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
+            <div><span ng-class="{complete:false, active: ctrl.activeStep === 2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
+            <div><span ng-class="{complete:false, active: ctrl.activeStep === 3}" ><i class="fa fa-check" ></i> 3. <span >Assign IRC Roles</span></span></div>
+        </div>
+
+        <div ng-show="ctrl.activeStep === 1">
+            <label class="section-label"><span>{% trans "Select Organization Units" %}</span>:</label>
+            <p>Countries chosen will 'filter' your choices in the next steps</p>
+            <div class="organisation-units section clearfix">
+                {% for chunks in organizationUnits %}
+                    <div class="col-sm-4">
+                        {% for row in chunks %}
+                            <div class="row">
+                                <treecontrol class="tree-light" tree-model="{{ row }}" on-selection="ctrl.showSelected(node)" options="ctrl.treeOptions">
+                                    {% verbatim %}
+                                        {{ node.displayName }}
+                                    {% endverbatim %}
+                                </treecontrol>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="action-row" >
+                <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length === 0" ng-click="ctrl.goToStep(2)" >
+                    <span>{% trans 'Next' %}</span>
+                </button>
+                <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
+            </div>
+        </div>
+        <div ng-show="ctrl.activeStep === 2">
+            <h2>Comming Soon!!!</h2>
+        </div>
+    </div>
+{% endblock container %}
