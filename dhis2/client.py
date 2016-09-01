@@ -41,8 +41,8 @@ class DHIS2Client(object):
 
     def get_organization_units(self):
         session = self.session
-        max_level_response = session.get(self.url + 'filledOrganisationUnitLevels.json')
-        max_level = max_level_response.json()[-1]['level']
+        max_level_response = session.get(self.url + 'organisationUnitLevels.json', params={'fields': 'level'})
+        max_level = sorted([org['level'] for org in max_level_response.json()['organisationUnitLevels']])[-1]
         fields = 'children[displayName,id]'
         for _ in range(max_level, 0, -1):
             fields = 'children[displayName,id,%s]' % fields
