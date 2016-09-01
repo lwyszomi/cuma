@@ -19,7 +19,7 @@
         <span>{{ user.userCredentials.username }}</span>
         <hr>
     </div>
-    <div class="user-edit-form" ng-app="cumaApp" ng-controller="editController as ctrl">
+    <div class="user-edit-form" ng-app="cumaApp" ng-controller="editController as ctrl" ng-cloak>
         <div class="bread-crumb clearfix">
             <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
             <div><span ng-class="{complete:false, active: ctrl.activeStep === 2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
