@@ -2,6 +2,7 @@ from django.views.generic.base import TemplateView
 import math
 import users.queries as queries
 from collections import defaultdict
+import json
 
 
 class UserListView(TemplateView):
@@ -49,7 +50,7 @@ class EditUserView(TemplateView):
             org_len = len(orgs)
             elem_in_chunks = int(math.ceil(org_len/3.0))
             for i in range(0, org_len, elem_in_chunks):
-                yield [orgs[i:i+elem_in_chunks]]
+                yield [json.dumps(orgs[i:i+elem_in_chunks])]
 
         kwargs['organizationUnits'] = get_chunks(organization_units)
 
