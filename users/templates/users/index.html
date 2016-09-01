@@ -2,11 +2,11 @@
 {% load static %}
 {% block js %}
     {{ block.super }}
-        <script src='{% static "datatables/media/js/jquery.dataTables.min.js" %}'></script>
+
         <script>
             $(document).ready(function() {
                 var datatable = $('#datatable').DataTable({
-                    "columnDefs": [ {
+                    "columnDefs": [{
                         "orderable": false,
                         "targets": 3
                     }]
@@ -14,29 +14,28 @@
             });
         </script>
 {% endblock js %}
-{% block style %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href='{% static "datatables/media/css/dataTables.bootstrap.min.css" %}'/>
-{% endblock style %}
+
 {% block container %}
-    <table id="datatable" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Username</th>
-                <th>State</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.displayName }}</td>
-                <td>{{ user.userCredentials.username }}</td>
-                <td>{% if not user.userCredentials.disabled %}Active{% else %}Inactive{% endif %}</td>
-                <td><a href="{% url 'show_user' user.id %}">Profile</a></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="top10">
+        <table id="datatable" class="table table-striped" cellspacing="0" width="100%">
+            <thead>
+                <tr class="search-result-header">
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>State</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.displayName }}</td>
+                    <td>{{ user.userCredentials.username }}</td>
+                    <td>{% if not user.userCredentials.disabled %}Active{% else %}Inactive{% endif %}</td>
+                    <td><a href="{% url 'show_user' user_id=user.id %}">Profile</a> | <a href="{% url 'edit_user' user_id=user.id %}">Edit</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock container %}

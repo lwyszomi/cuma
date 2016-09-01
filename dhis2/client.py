@@ -30,7 +30,7 @@ class DHIS2Client(object):
         session = self.session
         fields = [
             ':all',
-            'userCredentials[disabled]',
+            'userCredentials[disabled,username]',
             'organisationUnits[displayName,level,ancestors[displayName,level]]',
             'userGroups[displayName]'
         ]
@@ -38,3 +38,19 @@ class DHIS2Client(object):
             'fields': ','.join(fields)
         })
         return response.json()
+
+    def get_organization_units(self):
+        session = self.session
+        max_level_response = session.get(self.url + 'filledOrganisationUnitLevels.json')
+        max_level = max_level_response.json()[-1]['level']
+        fields = 'children[displayName,id]'
+        while max_level > 0:
+            fields = 'children[displayName,id,%s]' % fields
+            max_level -= 1
+
+        response = session.get(self.url + 'organisationUnits.json', params={
+            'fields': 'displayName,id,%s' % fields,
+            'filter': 'level:eq:3'
+        })
+
+        return response.json()['organisationUnits']

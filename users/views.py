@@ -1,5 +1,5 @@
-from django.views.generic.base import TemplateView, View
-
+from django.views.generic.base import TemplateView
+import math
 import users.queries as queries
 from collections import defaultdict
 
@@ -34,3 +34,24 @@ class ShowUserView(TemplateView):
         kwargs['user'] = user
         kwargs['organizations'] = dict(org_dict)
         return super(ShowUserView, self).get_context_data(**kwargs)
+
+
+class EditUserView(TemplateView):
+
+    template_name = 'users/edit_user.html'
+
+    def get_context_data(self, **kwargs):
+        user = queries.get_user(kwargs['user_id'])
+        organization_units = queries.get_organization_units()
+        kwargs['user'] = user
+
+        def get_chunks(orgs):
+            org_len = len(orgs)
+            elem_in_chunks = math.ceil(org_len/3.0)
+            for i in range(0, org_len, elem_in_chunks):
+                yield [orgs[i:i+elem_in_chunks]]
+
+        kwargs['organizationUnits'] = get_chunks(organization_units)
+
+        return super(EditUserView, self).get_context_data(**kwargs)
+
