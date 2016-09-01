@@ -1,5 +1,7 @@
 import requests
 
+from settings import COUNTRY_LEVEL
+
 
 class DHIS2Client(object):
 
@@ -49,7 +51,7 @@ class DHIS2Client(object):
 
         response = session.get(self.url + 'organisationUnits.json', params={
             'fields': 'displayName,id,%s' % fields,
-            'filter': 'level:eq:3'
+            'filter': 'level:eq:%d' % COUNTRY_LEVEL
         })
 
         return response.json()['organisationUnits']

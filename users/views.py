@@ -2,6 +2,7 @@ from django.views.generic.base import TemplateView
 import math
 import users.queries as queries
 from collections import defaultdict
+from settings import COUNTRY_VELEL
 import json
 
 
@@ -24,8 +25,8 @@ class ShowUserView(TemplateView):
         org_dict = defaultdict(list)
         for org in organizations:
             country = None
-            if org['ancestors']:
-                country = org['ancestors'][0]
+            if len(org['ancestors']) == COUNTRY_LEVEL:
+                country = org['ancestors'][2]
 
             if country:
                 org_dict[country['displayName']].append(org['displayName'])

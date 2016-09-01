@@ -13,3 +13,5 @@ DATABASES = {
 DHIS2_API_URL = 'https://play.dhis2.org/demo/api/'
 DHIS2_USERNAME = 'admin'
 DHIS2_PASSWORD = 'district'
+
+COUNTRY_LEVEL = 3
