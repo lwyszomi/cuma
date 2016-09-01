@@ -4,10 +4,6 @@
 
 {% block js %} {{ block.super }}
     <script src="{% static 'users/js/app.js' %}"></script>
-    <script>
-        angular.module('cumaApp').constant("editConfig", {
-        })
-    </script>
     <script src="{% static 'users/js/controllers/edit_controller.js' %}"></script>
 {% endblock %}
 
@@ -25,12 +21,12 @@
     </div>
     <div class="user-edit-form" ng-app="cumaApp" ng-controller="editController as ctrl">
         <div class="bread-crumb clearfix">
-            <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep===1}" ><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
-            <div><span ng-class="{complete:false, active: ctrl.activeStep===2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
-            <div><span ng-class="{complete:false, active: ctrl.activeStep===3}" ><i class="fa fa-check" ></i> 3. <span >Assign IRC Roles</span></span></div>
+            <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
+            <div><span ng-class="{complete:false, active: ctrl.activeStep === 2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
+            <div><span ng-class="{complete:false, active: ctrl.activeStep === 3}" ><i class="fa fa-check" ></i> 3. <span >Assign IRC Roles</span></span></div>
         </div>
 
-        <div ng-show="ctrl.activeStep===1">
+        <div ng-show="ctrl.activeStep === 1">
             <label class="section-label"><span>{% trans "Select Organization Units" %}</span>:</label>
             <p>Countries chosen will 'filter' your choices in the next steps</p>
             <div class="organisation-units section clearfix">
@@ -49,13 +45,13 @@
                 {% endfor %}
             </div>
             <div class="action-row" >
-                <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length == 0" ng-click="ctrl.goToStep(2)" >
+                <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length === 0" ng-click="ctrl.goToStep(2)" >
                     <span>{% trans 'Next' %}</span>
                 </button>
                 <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
             </div>
         </div>
-        <div ng-show="ctrl.activeStep===2">
+        <div ng-show="ctrl.activeStep === 2">
             <h2>Comming Soon!!!</h2>
         </div>
     </div>
