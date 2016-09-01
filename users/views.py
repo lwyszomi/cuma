@@ -2,7 +2,7 @@ from django.views.generic.base import TemplateView
 import math
 import users.queries as queries
 from collections import defaultdict
-from settings import COUNTRY_VELEL
+from settings import COUNTRY_LEVEL
 import json
 
 
