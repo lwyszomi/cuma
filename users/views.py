@@ -47,7 +47,7 @@ class EditUserView(TemplateView):
 
         def get_chunks(orgs):
             org_len = len(orgs)
-            elem_in_chunks = math.ceil(org_len/3.0)
+            elem_in_chunks = int(math.ceil(org_len/3.0))
             for i in range(0, org_len, elem_in_chunks):
                 yield [orgs[i:i+elem_in_chunks]]
 
