@@ -16,5 +16,20 @@ angular.module('cumaApp').controller('editController', function() {
 
     this.goToStep = function goToStep(step) {
         this.activeStep = step;
-    }
+    };
+
+    this.addRole = function(item) {
+        item.show_button = false;
+        this.roleForms.push({"show_button": true})
+    };
+
+    this.roleForms = [
+        {"show_button": true}
+    ];
+
+    this.roles = [
+        {"name": "Analytics"},
+        {"name": "Pivot Table"},
+        {"name": "Individual Data Entry"}
+    ]
 });

@@ -33,7 +33,7 @@ class ShowUserView(LoginRequiredMixin, TemplateView):
         for org in organizations:
             country = None
             if len(org['ancestors']) >= settings.COUNTRY_LEVEL:
-                country = org['ancestors'][2]
+                country = org['ancestors'][settings.COUNTRY_LEVEL]
 
             if country:
                 org_dict[country['displayName']].append(org['displayName'])
@@ -61,5 +61,5 @@ class EditUserView(LoginRequiredMixin, TemplateView):
                 yield [json.dumps(orgs[i:i+elem_in_chunks])]
 
         kwargs['organizationUnits'] = get_chunks(organization_units)
-
+        kwargs['countryLvl'] = settings.COUNTRY_LEVEL
         return super(EditUserView, self).get_context_data(**kwargs)

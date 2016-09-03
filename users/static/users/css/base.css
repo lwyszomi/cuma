@@ -60,8 +60,28 @@ body {
 
 .box {
     margin: 5px;
-    border: 1px solid #eee;
+    border: 1px solid #ccc;
     padding: 5px;
+    border-radius: 5px;
+}
+
+.box-center {
+    text-align: center;
+}
+
+.add_role_button {
+    float: right;
+    padding: 5px;
+}
+
+.box-without-border {
+    margin-bottom: 30px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px;
 }
 
 /* Message colors */
