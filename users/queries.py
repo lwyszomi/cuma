@@ -16,3 +16,18 @@ def get_user(user_id):
 def get_organization_units():
     dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
     return dhis_client.get_organization_units()
+
+
+def get_countries():
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.get_countries()
+
+
+def get_user_groups():
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.get_user_groups()
+
+
+def get_user_roles():
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.get_user_roles()

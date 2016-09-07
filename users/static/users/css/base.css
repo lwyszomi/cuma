@@ -1,3 +1,7 @@
+body {
+    font-size: 12px !important;
+}
+
 .header-bar {
     background-color: #0f0f0f;
     height: 44px;
@@ -7,6 +11,11 @@
     left: 0;
     right: 0;
     box-shadow: 0 0 3px #222;
+}
+
+.form-horizontal .form-group {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 .top5 {

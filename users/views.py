@@ -5,13 +5,19 @@ from collections import defaultdict
 from settings import COUNTRY_LEVEL
 import json
 
+from users.utils import generate_user_view_format, generate_hierarchy
+
 
 class UserListView(TemplateView):
 
     template_name = 'users/index.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['users'] = queries.get_users()
+        users = queries.get_users()
+
+        kwargs['users'] = json.dumps(generate_user_view_format(users))
+        kwargs['countries'] = json.dumps(generate_hierarchy())
+
         return super(UserListView, self).get_context_data(**kwargs)
 
 
@@ -25,7 +31,7 @@ class ShowUserView(TemplateView):
         org_dict = defaultdict(list)
         for org in organizations:
             country = None
-            if len(org['ancestors']) == COUNTRY_LEVEL:
+            if len(org['ancestors']) >= COUNTRY_LEVEL:
                 country = org['ancestors'][2]
 
             if country:
@@ -56,4 +62,3 @@ class EditUserView(TemplateView):
         kwargs['organizationUnits'] = get_chunks(organization_units)
 
         return super(EditUserView, self).get_context_data(**kwargs)
-
