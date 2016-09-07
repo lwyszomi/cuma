@@ -5,10 +5,11 @@ from collections import defaultdict
 from django.conf import settings
 import json
 
+from accounts.mixins import LoginRequiredMixin
 from users.utils import generate_user_view_format, generate_hierarchy
 
 
-class UserListView(TemplateView):
+class UserListView(LoginRequiredMixin, TemplateView):
 
     template_name = 'users/index.html'
 
@@ -21,7 +22,7 @@ class UserListView(TemplateView):
         return super(UserListView, self).get_context_data(**kwargs)
 
 
-class ShowUserView(TemplateView):
+class ShowUserView(LoginRequiredMixin, TemplateView):
 
     template_name = 'users/show_user.html'
 
@@ -39,19 +40,19 @@ class ShowUserView(TemplateView):
             else:
                 org_dict[org['displayName']] = []
 
-        kwargs['user'] = user
+        kwargs['dhis_user'] = user
         kwargs['organizations'] = dict(org_dict)
         return super(ShowUserView, self).get_context_data(**kwargs)
 
 
-class EditUserView(TemplateView):
+class EditUserView(LoginRequiredMixin, TemplateView):
 
     template_name = 'users/edit_user.html'
 
     def get_context_data(self, **kwargs):
         user = queries.get_user(kwargs['user_id'])
         organization_units = queries.get_organization_units()
-        kwargs['user'] = user
+        kwargs['dhis_user'] = user
 
         def get_chunks(orgs):
             org_len = len(orgs)

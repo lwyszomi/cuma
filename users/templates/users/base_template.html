@@ -30,10 +30,31 @@
     <body>
         <div class="header-bar" id="header">
             <span class="header-text" id="headerText">COMET | User Management</span>
+            <ul class="right-nav pull-right">
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                        <li class="pull-left"><a href="{% url 'admin:index' %}">Admin</a></li>
+                    {% endif %}
+                    <li class="pull-left"><a href="{% url 'logout' %}">Log out</a></li>
+                {% endif %}
+            </ul>
         </div>
         <div class="container">
             {% block bread-crumb %}
             {% endblock bread-crumb %}
+            {% block messages %}
+                <div class="row" style="margin-top: 20px">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div {% if message.tags %} class="text-center alert alert-{{ message.tags }} alert-dismissible"{% endif %}>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+            {% endblock messages %}
             {% block container %}
             {% endblock container %}
         </div>

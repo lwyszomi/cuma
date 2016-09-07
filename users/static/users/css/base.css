@@ -900,3 +900,21 @@ table .tablesort-sortable:hover::after, table .tablesort-asc::after, table .tabl
 .user-not-configured {
     color: #D0021B;
 }
+
+.header-bar .right-nav {
+    margin-right: 30px;
+}
+
+.header-bar a {
+    line-height: 44px;
+    font-size: 15px;
+    color: white;
+}
+
+.header-bar ul {
+    list-style: none;
+}
+
+.header-bar li {
+    padding-right: 10px;
+}

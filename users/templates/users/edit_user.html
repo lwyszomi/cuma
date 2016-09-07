@@ -14,8 +14,8 @@
 
 {% block container %}
     <div class="user_details">
-        <h2>{{ user.displayName}}</h2>
-        <span>{{ user.userCredentials.username }}</span>
+        <h2>{{ dhis_user.displayName}}</h2>
+        <span>{{ dhis_user.userCredentials.username }}</span>
         <hr>
     </div>
     <div class="user-edit-form" ng-app="cumaApp" ng-controller="editController as ctrl" ng-cloak>
