@@ -1,6 +1,7 @@
 import requests
 
 from django.conf import settings
+from requests.packages.urllib3.exceptions import HTTPError
 
 
 class DHIS2Client(object):
@@ -15,6 +16,14 @@ class DHIS2Client(object):
         session = requests.Session()
         session.auth = (self.username, self.password)
         return session
+
+    def get_user_profile(self, username, password):
+        response = requests.get(self.url + 'me.json', params={
+            'fields': 'id,firstName,surname,email,userCredentials[username]'
+        }, auth=(username, password))
+        if response.status_code != 200:
+            raise HTTPError(response=response)
+        return response.json()
 
     def get_users(self):
         session = self.session
