@@ -1,6 +1,6 @@
 import requests
 
-from settings import COUNTRY_LEVEL
+from django.conf import settings
 
 
 class DHIS2Client(object):
@@ -55,7 +55,7 @@ class DHIS2Client(object):
         response = session.get(self.url + 'organisationUnits.json', params={
             'fields': 'displayName,id,%s' % fields,
             'paging': 'false',
-            'filter': 'level:eq:%d' % COUNTRY_LEVEL
+            'filter': 'level:eq:%d' % settings.COUNTRY_LEVEL
         })
 
         return response.json()['organisationUnits']
@@ -64,7 +64,7 @@ class DHIS2Client(object):
         session = self.session
         countries = session.get(self.url + 'organisationUnits.json', params={
             'fields': ':all,children[id,displayName]',
-            'filter': 'level:eq:%d' % COUNTRY_LEVEL,
+            'filter': 'level:eq:%d' % settings.COUNTRY_LEVEL,
             'paging': 'false'
         })
         return countries.json()['organisationUnits']
