@@ -12,12 +12,12 @@
         <div class="user_details">
             <h2>DHIS2 Details</h2>
             <hr>
-            <h4>{{ user.displayName}}</h4>
-            {% if user.email %}
-                <span>{{ user.email }}</span></br>
+            <h4>{{ dhis_user.displayName}}</h4>
+            {% if dhis_user.email %}
+                <span>{{ dhis_user.email }}</span></br>
             {% endif %}
             <span>
-                {% if not user.userCredentials.disabled %}Active{% else %}Inactive{% endif %}
+                {% if not dhis_user.userCredentials.disabled %}Active{% else %}Inactive{% endif %}
             </span>
         </div>
         <div class="comet_profile">
@@ -57,7 +57,7 @@
                     <div id="user_groups" class="col-sm-10">
                         <div class="box">
                             <ul>
-                                {% for group in user.userGroups %}
+                                {% for group in dhis_user.userGroups %}
                                     <li>{{ group.displayName }}</li>
                                 {% endfor %}
                             </ul>

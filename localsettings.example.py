@@ -10,7 +10,8 @@ DATABASES = {
 }
 
 # Existing demo instance, change this to your local instance
-DHIS2_API_URL = 'https://play.dhis2.org/demo/api/'
+DHIS2_URL = 'https://play.dhis2.org/demo/'
+DHIS2_API_URL = DHIS2_URL + 'api/'
 DHIS2_USERNAME = 'admin'
 DHIS2_PASSWORD = 'district'
 

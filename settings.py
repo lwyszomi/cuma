@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
+    'crispy_forms',
+    'accounts',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -134,6 +136,15 @@ DHIS2_USERNAME = ''
 DHIS2_PASSWORD = ''
 
 COUNTRY_LEVEL = 3
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+AUTH_USER_MODEL = 'accounts.DHIS2User'
+
+AUTHENTICATION_BACKENDS = (
+    'dhis2.auth.DHIS2Authentication',
+)
+
 
 try:
     from localsettings import *
