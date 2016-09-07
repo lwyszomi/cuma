@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from settings import COUNTRY_LEVEL
+from django.conf import settings
 from users import queries
 
 
@@ -10,18 +10,18 @@ def generate_user_view_format(users):
         countries = {}
         sectors = {}
         for org in u['organisationUnits']:
-            if len(org['ancestors']) >= COUNTRY_LEVEL:
+            if len(org['ancestors']) >= settings.COUNTRY_LEVEL:
                 key = org['ancestors'][2]['id']
                 countries.update({key: org['ancestors'][2]})
-                if len(org['ancestors']) > COUNTRY_LEVEL:
+                if len(org['ancestors']) > settings.COUNTRY_LEVEL:
                     key = org['ancestors'][3]['id']
                     sectors.update({key: org['ancestors'][3]})
-                elif len(org['ancestors']) == COUNTRY_LEVEL:
+                elif len(org['ancestors']) == settings.COUNTRY_LEVEL:
                     org_copy = dict(org)
                     key = org_copy['id']
                     del org_copy['ancestors']
                     sectors.update({key: org_copy})
-            elif len(org['ancestors']) == COUNTRY_LEVEL - 1:
+            elif len(org['ancestors']) == settings.COUNTRY_LEVEL - 1:
                 key = org['id']
                 del org['ancestors']
                 countries.update({key: org})

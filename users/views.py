@@ -2,7 +2,7 @@ from django.views.generic.base import TemplateView
 import math
 import users.queries as queries
 from collections import defaultdict
-from settings import COUNTRY_LEVEL
+from django.conf import settings
 import json
 
 from users.utils import generate_user_view_format, generate_hierarchy
@@ -31,7 +31,7 @@ class ShowUserView(TemplateView):
         org_dict = defaultdict(list)
         for org in organizations:
             country = None
-            if len(org['ancestors']) >= COUNTRY_LEVEL:
+            if len(org['ancestors']) >= settings.COUNTRY_LEVEL:
                 country = org['ancestors'][2]
 
             if country:

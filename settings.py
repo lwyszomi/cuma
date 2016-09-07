@@ -133,6 +133,8 @@ DHIS2_API_URL = ''
 DHIS2_USERNAME = ''
 DHIS2_PASSWORD = ''
 
+COUNTRY_LEVEL = 3
+
 try:
     from localsettings import *
 except ImportError:
