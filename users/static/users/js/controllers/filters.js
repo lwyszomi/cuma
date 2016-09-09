@@ -26,16 +26,18 @@ angular.module('cumaApp').filter('bySearch', function() {
 }).filter('bySector', function() {
     return function(items, selected) {
         var filteredItems = [];
-        var sectorsIds = [];
+        var sectorsNames = [];
         if (selected === void(0) || selected.length == 0) return items;
 
-        sectorsIds = selected.map(function(item, index) { return item.id});
+        sectorsNames = selected.map(function(item, index) { return item.displayName});
 
         items.forEach(function(item) {
-            item.sectors.forEach(function(sector) {
-                if (sectorsIds.indexOf(sector.id) !== -1 && filteredItems.indexOf(item) === -1) {
-                    filteredItems.push(item);
-                }
+            item.roles.forEach(function(role) {
+                sectorsNames.forEach(function (sector) {
+                    if (role.displayName.indexOf(sector) !== -1 && filteredItems.indexOf(item) === -1) {
+                        filteredItems.push(item);
+                    }
+                })
             });
         });
         return filteredItems;
