@@ -63,7 +63,7 @@
                         <div class="box-without-border">
                             <div class="input-group margin-bottom-10">
                                 <ui-select allow-clear ng-model="item.role.selected" on-select="item.sector.selected = undefined; item.country.selected = undefined; item.show_button=false; item.show_error=false;" theme="bootstrap">
-                                    <ui-select-match placeholder="Chose role">
+                                    <ui-select-match placeholder="Choose role">
                                         {% verbatim %}
                                             {{ $select.selected.name }}
                                         {% endverbatim %}
@@ -84,7 +84,7 @@
 
                             <div ng-show="item.role.selected !== undefined" class="input-group margin-bottom-10">
                                 <ui-select allow-clear ng-model="item.country.selected" on-select="item.sector.selected = undefined; item.show_button=false; item.show_error=false;" theme="bootstrap">
-                                    <ui-select-match placeholder="Chose Country">
+                                    <ui-select-match placeholder="Choose Country">
                                         {% verbatim %}
                                             {{ $select.selected.displayName }}
                                         {% endverbatim %}
@@ -104,7 +104,7 @@
                             </div>
                             <div ng-show="item.country.selected !== undefined" class="input-group margin-bottom-10">
                                 <ui-select allow-clear ng-model="item.sector.selected" on-select="ctrl.addRole(item)" theme="bootstrap">
-                                    <ui-select-match placeholder="Chose Sector">
+                                    <ui-select-match placeholder="Choose Sector">
                                         {% verbatim %}
                                             {{ $select.selected }}
                                         {% endverbatim %}
