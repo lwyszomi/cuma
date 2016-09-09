@@ -3,6 +3,15 @@
 {% load i18n %}
 
 {% block js %} {{ block.super }}
+    <script>
+        angular.module('cumaApp').constant('editConfig', {
+            "dhis_user": {{ dhis_user|safe }},
+            "organisationUnits": {{ organisationUnits|safe }},
+            "countryLevel": {{ countryLvl }},
+            "userGroups": {{ userGroups|safe }},
+            "roleUrl": "{% url 'get_role_by_name' %}"
+        })
+    </script>
     <script src="{% static 'users/js/controllers/edit_controller.js' %}"></script>
 {% endblock %}
 
@@ -13,15 +22,15 @@
 {% endblock bread-crumb %}
 
 {% block container %}
-    <div class="user_details">
-        <h2>{{ dhis_user.displayName}}</h2>
-        <span>{{ dhis_user.userCredentials.username }}</span>
-        <hr>
-    </div>
     <div class="user-edit-form" ng-app="cumaApp" ng-controller="editController as ctrl" ng-cloak>
+        <div class="user_details">
+            <h2>{% verbatim %}{{ ctrl.dhis_user.displayName}}{% endverbatim %}</h2>
+            <span>{% verbatim %}{{ ctrl.dhis_user.userCredentials.username }}{% endverbatim %}</span>
+            <hr>
+        </div>
         <div class="bread-crumb clearfix">
             <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
-            <div><span ng-class="{complete:false, active: ctrl.activeStep === 2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
+            <div><span ng-class="{complete:ctrl.activeStep > 1 && (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
             <div><span ng-class="{complete:false, active: ctrl.activeStep === 3}" ><i class="fa fa-check" ></i> 3. <span >Assign IRC Roles</span></span></div>
         </div>
 
@@ -29,19 +38,15 @@
             <label class="section-label"><span>{% trans "Select Organization Units" %}</span>:</label>
             <p>Countries chosen will 'filter' your choices in the next steps</p>
             <div class="organisation-units section clearfix">
-                {% for chunks in organizationUnits %}
-                    <div class="col-sm-4">
-                        {% for row in chunks %}
-                            <div class="row">
-                                <treecontrol class="tree-light" tree-model="{{ row }}" on-selection="ctrl.showSelected(node)" options="ctrl.treeOptions">
-                                    {% verbatim %}
-                                        {{ node.displayName }}
-                                    {% endverbatim %}
-                                </treecontrol>
-                            </div>
-                        {% endfor %}
+                <div class="col-sm-4" ng-repeat="chunk in ctrl.organisationsInChunks">
+                    <div class="row" ng-repeat="row in chunk">
+                        <treecontrol class="tree-light" tree-model="row" selected-nodes="ctrl.selectedNodes" options="ctrl.treeOptions">
+                            {% verbatim %}
+                                {{ node.displayName }}
+                            {% endverbatim %}
+                        </treecontrol>
                     </div>
-                {% endfor %}
+                </div>
             </div>
             <div class="action-row" >
                 <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length === 0" ng-click="ctrl.goToStep(2)" >
@@ -51,7 +56,107 @@
             </div>
         </div>
         <div ng-show="ctrl.activeStep === 2">
-            <h2>Comming Soon!!!</h2>
+            <div class="row">
+                <label class="section-label"><span>{% trans "Select User Roles" %}</span>:</label>
+                <div class="col-sm-5">
+                    <div ng-repeat="item in ctrl.roleForms">
+                        <div class="box-without-border">
+                            <div class="input-group margin-bottom-10">
+                                <ui-select allow-clear ng-model="item.role.selected" on-select="item.sector.selected = undefined; item.country.selected = undefined; item.show_button=false; item.show_error=false;" theme="bootstrap">
+                                    <ui-select-match placeholder="Chose role">
+                                        {% verbatim %}
+                                            {{ $select.selected.name }}
+                                        {% endverbatim %}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="roleItem in ctrl.roles">
+                                        {% verbatim %}
+                                            {{ roleItem.name}}
+                                        {% endverbatim %}
+                                    </ui-select-choices>
+                                </ui-select>
+
+                                <span class="input-group-btn">
+                                    <button type="button" ng-click="item.role.selected = undefined; item.country.selected = undefined; item.sector.selected = undefined; item.show_button=false; item.show_error=false;" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                   </button>
+                                </span>
+                            </div>
+
+                            <div ng-show="item.role.selected !== undefined" class="input-group margin-bottom-10">
+                                <ui-select allow-clear ng-model="item.country.selected" on-select="item.sector.selected = undefined; item.show_button=false; item.show_error=false;" theme="bootstrap">
+                                    <ui-select-match placeholder="Chose Country">
+                                        {% verbatim %}
+                                            {{ $select.selected.displayName }}
+                                        {% endverbatim %}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="countryItem in ctrl.nodeCountries">
+                                        {% verbatim %}
+                                            {{ countryItem.displayName }}
+                                        {% endverbatim %}
+                                    </ui-select-choices>
+                                </ui-select>
+
+                                <span class="input-group-btn">
+                                    <button type="button" ng-click="item.country.selected = undefined; item.sector.selected = undefined; item.show_button=false; item.show_error=false;" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                   </button>
+                                </span>
+                            </div>
+                            <div ng-show="item.country.selected !== undefined" class="input-group margin-bottom-10">
+                                <ui-select allow-clear ng-model="item.sector.selected" on-select="ctrl.addRole(item)" theme="bootstrap">
+                                    <ui-select-match placeholder="Chose Sector">
+                                        {% verbatim %}
+                                            {{ $select.selected }}
+                                        {% endverbatim %}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="sector in item.country.selected.sectors">
+                                        {% verbatim %}
+                                            {{ sector }}
+                                        {% endverbatim %}
+                                    </ui-select-choices>
+                                </ui-select>
+
+                                <span class="input-group-btn">
+                                    <button type="button" ng-click="item.sector.selected = undefined; item.show_button=false; item.show_error=false;" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                   </button>
+                                </span>
+                            </div>
+                            <div>
+                                <span ng-show="item.show_error"> * Role doesn't exist in DHIS system!</span>
+                                <button ng-show="item.show_button" class="add_role_button btn-xs btn-success" ng-click="ctrl.newRole(item)"><span class="glyphicon glyphicon-plus"></span> {% trans "New Role" %}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="box">
+                        <div class="center">
+                            <label><span>{% trans "Current Roles Assigned" %}</span></label>
+                        </div>
+                        <ul>
+                            <li ng-repeat="role in roles = ctrl.dhis_user.userCredentials.userRoles.concat(ctrl.newRoles)">
+                                {% verbatim %}
+                                    {{ role.displayName }}
+                                {% endverbatim %}
+                                <i ng-click="ctrl.removeRole(role)" class="glyphicon glyphicon-remove"></i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userCredentials.userRoles.length === 0 && ctrl.newRoles.length === 0" ng-click="ctrl.goToStep(3)" >
+                    <span>{% trans 'Next' %}</span>
+                </button>
+                <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
+            </div>
+        </div>
+        <div ng-show="ctrl.activeStep === 3">
+            <label class="section-label"><span>{% trans "Select User Groups" %}</span>:</label>
+            <div class="col-sm-5">
+                Coming Soon !
+            </div>
         </div>
     </div>
 {% endblock container %}

@@ -49,29 +49,21 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
     }, function(newValue, oldValue) {
         if (newValue.length !== oldValue.length){
             vm.sectors = [];
-            vm.userGroups = [];
-            vm.userRoles = [];
             newValue.forEach(function (val) {
-                vm.sectors.push.apply(vm.sectors, val.children);
-                vm.userGroups.push.apply(vm.userGroups, val.groups);
+                vm.sectors.push.apply(vm.sectors, val.sectors);
                 vm.userRoles.push.apply(vm.userRoles, val.roles);
             });
-            var deletedCountry = [];
-            deletedCountry = oldValue.filter(function(x) {
+            var deletedCountry = oldValue.filter(function(x) {
                 return newValue.indexOf(x) === -1;
             });
             if (deletedCountry.length == 1) {
                 var selectedSectors = vm.selectedSectors.filter(function(y) {
-                    return deletedCountry[0].children.indexOf(y) === -1;
-                });
-                var selectedUserGroups = vm.selectedUserGroups.filter(function(g) {
-                    return deletedCountry[0].groups.indexOf(g) === -1;
+                    return deletedCountry[0].sectors.indexOf(y) === -1;
                 });
                 var selectedUserRoles = vm.selectedUserGroups.filter(function(r) {
                     return deletedCountry[0].roles.indexOf(r) === -1;
                 });
                 vm.selectedSectors = selectedSectors;
-                vm.selectedUserGroups = selectedUserGroups;
                 vm.selectedUserRoles = selectedUserRoles;
             }
             vm.dtInstance.rerender();
@@ -82,6 +74,18 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
         return vm.selectedSectors;
     }, function(newValue, oldValue) {
         if (newValue.length !== oldValue.length) {
+            vm.userGroups = [];
+            newValue.forEach(function (val) {
+                vm.userGroups.push.apply(vm.userGroups, val.groups);
+            });
+            var deletedSector = oldValue.filter(function(x) {
+                return newValue.indexOf(x) === -1;
+            });
+            if (deletedSector.length == 1) {
+                vm.selectedUserGroups = vm.selectedUserGroups.filter(function(g) {
+                    return deletedCountry[0].groups.indexOf(g) === -1;
+                });
+            }
             vm.dtInstance.rerender();
         }
     });

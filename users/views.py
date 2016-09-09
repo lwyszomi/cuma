@@ -1,4 +1,5 @@
-from django.views.generic.base import TemplateView
+from django.http import JsonResponse
+from django.views.generic.base import TemplateView, View
 import math
 import users.queries as queries
 from collections import defaultdict
@@ -33,7 +34,7 @@ class ShowUserView(LoginRequiredMixin, TemplateView):
         for org in organizations:
             country = None
             if len(org['ancestors']) >= settings.COUNTRY_LEVEL:
-                country = org['ancestors'][2]
+                country = org['ancestors'][settings.COUNTRY_LEVEL-1]
 
             if country:
                 org_dict[country['displayName']].append(org['displayName'])
@@ -52,14 +53,31 @@ class EditUserView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         user = queries.get_user(kwargs['user_id'])
         organization_units = queries.get_organization_units()
-        kwargs['dhis_user'] = user
-
-        def get_chunks(orgs):
-            org_len = len(orgs)
-            elem_in_chunks = int(math.ceil(org_len/3.0))
-            for i in range(0, org_len, elem_in_chunks):
-                yield [json.dumps(orgs[i:i+elem_in_chunks])]
-
-        kwargs['organizationUnits'] = get_chunks(organization_units)
-
+        roles = queries.get_user_roles()
+        for org in organization_units:
+            org['sectors'] = []
+            sectors = []
+            if 'code' not in org:
+                continue
+            for role in roles:
+                if org['code'] in role['displayName']:
+                    sector = role['displayName'].split(": %s- " % org['code'])
+                    if len(sector) == 2:
+                        sectors.append(sector[1])
+            org['sectors'] = list(set(sectors))
+        user_groups = queries.get_user_groups()
+        kwargs['dhis_user'] = json.dumps(user)
+        kwargs['organisationUnits'] = json.dumps(organization_units)
+        kwargs['countryLvl'] = settings.COUNTRY_LEVEL
+        kwargs['userGroups'] = json.dumps(user_groups)
         return super(EditUserView, self).get_context_data(**kwargs)
+
+
+class GetRoleView(View):
+
+    def get(self, request, *agrs, **kwargs):
+        role_name = request.GET.get('role_name', '')
+        role = ''
+        if role_name:
+            role = queries.get_role_by_name(role_name)
+        return JsonResponse(data={'role': role})

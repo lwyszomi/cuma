@@ -44,9 +44,9 @@ class DHIS2Client(object):
         session = self.session
         fields = [
             ':all',
-            'userCredentials[disabled,username]',
-            'organisationUnits[displayName,level,ancestors[displayName,level]]',
-            'userGroups[displayName]'
+            'userCredentials[disabled,username,userRoles[displayName,id]]',
+            'organisationUnits[displayName,level,code,id,ancestors[displayName,level,code,id]]',
+            'userGroups[displayName]',
         ]
         response = session.get(self.url + 'users/%s.json' % user_id, params={
             'fields': ','.join(fields)
@@ -57,14 +57,17 @@ class DHIS2Client(object):
         session = self.session
         max_level_response = session.get(self.url + 'organisationUnitLevels.json', params={'fields': 'level'})
         max_level = sorted([org['level'] for org in max_level_response.json()['organisationUnitLevels']])[-1]
-        fields = 'children[displayName,id]'
+        fields = 'children[displayName,code,id,level]'
         for _ in range(max_level, 0, -1):
-            fields = 'children[displayName,id,%s]' % fields
+            fields = 'children[displayName,code,id,level,%s]' % fields
 
         response = session.get(self.url + 'organisationUnits.json', params={
-            'fields': 'displayName,id,%s' % fields,
+            'fields': 'displayName,code,id,level,%s' % fields,
             'paging': 'false',
-            'filter': 'level:eq:%d' % settings.COUNTRY_LEVEL
+            'filter': [
+                'level:eq:%d' % settings.COUNTRY_LEVEL,
+                'displayName:in:[Burma/Myanmar,Pakistan,Syria]' # TODO Remove this before deploy on production
+            ]
         })
 
         return response.json()['organisationUnits']
@@ -72,7 +75,7 @@ class DHIS2Client(object):
     def get_countries(self):
         session = self.session
         countries = session.get(self.url + 'organisationUnits.json', params={
-            'fields': ':all,children[id,displayName]',
+            'fields': 'id,level,displayName,code',
             'filter': 'level:eq:%d' % settings.COUNTRY_LEVEL,
             'paging': 'false'
         })
@@ -90,6 +93,15 @@ class DHIS2Client(object):
         session = self.session
         groups = session.get(self.url + 'userRoles.json', params={
             'fields': 'displayName,id',
+            'paging': 'false'
+        })
+        return groups.json()['userRoles']
+
+    def get_role_by_name(self, role_name):
+        session = self.session
+        groups = session.get(self.url + 'userRoles.json', params={
+            'fields': 'displayName,id',
+            'filter': 'displayName:eq:%s' % role_name,
             'paging': 'false'
         })
         return groups.json()['userRoles']
