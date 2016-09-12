@@ -1,4 +1,6 @@
 from django.http import JsonResponse
+from django.urls.base import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 import math
 import users.queries as queries
@@ -61,7 +63,7 @@ class EditUserView(LoginRequiredMixin, TemplateView):
                 continue
             for role in roles:
                 if org['code'] in role['displayName']:
-                    sector = role['displayName'].split(": %s- " % org['code'])
+                    sector = role['displayName'].split("%s- " % org['code'])
                     if len(sector) == 2:
                         sectors.append(sector[1])
             org['sectors'] = list(set(sectors))
@@ -81,3 +83,18 @@ class GetRoleView(View):
         if role_name:
             role = queries.get_role_by_name(role_name)
         return JsonResponse(data={'role': role})
+
+
+class SaveUserView(View):
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super(SaveUserView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *agrs, **kwargs):
+        user = json.loads(request.body)
+        response = queries.save_user(user)
+        if response.status_code == 200:
+            return JsonResponse(data={'redirect': reverse('show_user', kwargs={'user_id': user['id']})})
+        else:
+            return JsonResponse(data={'error': 'Error'})

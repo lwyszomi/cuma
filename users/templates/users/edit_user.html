@@ -9,9 +9,12 @@
             "organisationUnits": {{ organisationUnits|safe }},
             "countryLevel": {{ countryLvl }},
             "userGroups": {{ userGroups|safe }},
-            "roleUrl": "{% url 'get_role_by_name' %}"
+            "roleUrl": "{% url 'get_role_by_name' %}",
+            "saveUrl": "{% url 'save_user' %}",
+            "usersUrl": "{% url 'users' %}"
         })
     </script>
+    <script src="{% static 'users/js/controllers/filters.js' %}"></script>
     <script src="{% static 'users/js/controllers/edit_controller.js' %}"></script>
 {% endblock %}
 
@@ -153,9 +156,53 @@
             </div>
         </div>
         <div ng-show="ctrl.activeStep === 3">
-            <label class="section-label"><span>{% trans "Select User Groups" %}</span>:</label>
-            <div class="col-sm-5">
-                Coming Soon !
+            <div class="row">
+                <label class="section-label"><span>{% trans "Select User Groups" %}</span>:</label>
+                <div class="col-sm-5">
+                    <div class="box-without-border">
+                        <div class="input-group margin-bottom-10">
+                            <ui-select allow-clear ng-model="ctrl.group.selected" on-select="ctrl.newGroups.push(ctrl.group.selected)" item.show_error=false;" theme="bootstrap">
+                                <ui-select-match placeholder="Choose user group">
+                                    {% verbatim %}
+                                        {{ $select.selected.displayName }}
+                                    {% endverbatim %}
+                                </ui-select-match>
+                                <ui-select-choices repeat="group in ctrl.userGroups | groupsByCountry:ctrl.nodeCountries ">
+                                    {% verbatim %}
+                                        {{ group.displayName}}
+                                    {% endverbatim %}
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span class="input-group-btn">
+                                <button type="button" ng-click="ctrl.group.selected = undefined" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                               </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="box">
+                        <div class="center">
+                            <label><span>{% trans "Current Roles Assigned" %}</span></label>
+                        </div>
+                        <ul>
+                            <li ng-repeat="group in groups = ctrl.dhis_user.userGroups.concat(ctrl.newGroups)">
+                                {% verbatim %}
+                                    {{ group.displayName }}
+                                {% endverbatim %}
+                                <i ng-click="ctrl.removeGroup(role)" class="glyphicon glyphicon-remove"></i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userGroups.length === 0 && ctrl.newGroups.length === 0" ng-click="ctrl.save()" >
+                    <span>{% trans 'Save User' %}</span>
+                </button>
+                <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
             </div>
         </div>
     </div>
