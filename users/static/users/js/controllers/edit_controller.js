@@ -6,12 +6,15 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
     vm.countryLevel = editConfig.countryLevel;
     vm.userGroups = editConfig.userGroups;
     vm.roleUrl = editConfig.roleUrl;
+    vm.saveUrl = editConfig.saveUrl;
+    vm.usersUrl = editConfig.usersUrl;
     vm.dataForTree = [];
     vm.selectedNodes = [];
     vm.activeStep = 1;
     vm.organisationsInChunks = [];
     vm.nodeCountries = [];
     vm.newRoles = [];
+    vm.newGroups = [];
 
     vm.splitOrganisation = function() {
         var array = [];
@@ -138,5 +141,18 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
             vm.getCountries()
         }
     });
+
+    vm.save = function() {
+        vm.dhis_user.userCredentials.userRoles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
+        vm.dhis_user.userGroups = vm.dhis_user.userGroups.concat(vm.newGroups);
+        vm.dhis_user.organisationUnits = vm.selectedNodes;
+        $http.post(vm.saveUrl, vm.dhis_user).then(
+            function(successCallback) {
+                window.location = successCallback.data.redirect;
+            }, function(errorCallback) {
+                alert("Error")
+            }
+        )
+    }
 
 });

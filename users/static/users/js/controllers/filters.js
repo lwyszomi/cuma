@@ -82,4 +82,18 @@ angular.module('cumaApp').filter('bySearch', function() {
         return items.filter(function (item, index) { return item.status === selected.text})
 
     }
+}).filter('groupsByCountry', function() {
+    return function(items, selected) {
+        var filteredItems = [];
+        var codes = selected.map(function(item, index) { return item.code});
+
+        items.forEach(function(item) {
+            codes.forEach(function(code) {
+                if (item.displayName.indexOf(code) !== -1 && filteredItems.indexOf(item) === -1) {
+                    filteredItems.push(item)
+                }
+            })
+        });
+        return filteredItems;
+    }
 });

@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from django.conf import settings
@@ -46,7 +48,7 @@ class DHIS2Client(object):
             ':all',
             'userCredentials[disabled,username,userRoles[displayName,id]]',
             'organisationUnits[displayName,level,code,id,ancestors[displayName,level,code,id]]',
-            'userGroups[displayName]',
+            'userGroups[id,displayName]',
         ]
         response = session.get(self.url + 'users/%s.json' % user_id, params={
             'fields': ','.join(fields)
@@ -66,7 +68,7 @@ class DHIS2Client(object):
             'paging': 'false',
             'filter': [
                 'level:eq:%d' % settings.COUNTRY_LEVEL,
-                'displayName:in:[Burma/Myanmar,Pakistan,Syria]' # TODO Remove this before deploy on production
+                'displayName:in:[Burma/Myanmar,Pakistan,Jordan]' # TODO Remove this before deploy on production
             ]
         })
 
@@ -105,3 +107,9 @@ class DHIS2Client(object):
             'paging': 'false'
         })
         return groups.json()['userRoles']
+
+    def save_user(self, user):
+        session = self.session
+        headers = {'content-type': 'application/json'}
+        save = session.put(user['href'], data=json.dumps(user), headers=headers)
+        return save

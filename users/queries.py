@@ -36,3 +36,8 @@ def get_user_roles():
 def get_role_by_name(role_name):
     dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
     return dhis_client.get_role_by_name(role_name)
+
+
+def save_user(user):
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.save_user(user)
