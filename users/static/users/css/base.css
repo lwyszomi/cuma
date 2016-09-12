@@ -2,6 +2,26 @@ body {
     font-size: 12px !important;
 }
 
+.form-inline .form-control {
+    width: 100% !important;
+}
+
+.container {
+    width: 80% !important;
+}
+
+.ui-select-container {
+    min-height: 34px !important;
+}
+
+.bottom30 {
+    margin-bottom: 30px;
+}
+
+.ui-select-choices-row {
+    font-size: 10px !important;
+}
+
 .header-bar {
     background-color: #0f0f0f;
     height: 44px;
@@ -42,6 +62,10 @@ body {
     margin-top: 30px;
 }
 
+.top70 {
+    margin-top: 30px;
+}
+
 .header-text {
     position: absolute;
     top: 12px;
@@ -53,9 +77,24 @@ body {
     line-height: 140%;
 }
 
+.header-text-right {
+    position: absolute;
+    top: 12px;
+    right: 175px;
+    font-weight: bold;
+    color: #FDC82F;
+    font-size: 16px;
+    font-family: LiberationSans, arial, sans-serif;
+    line-height: 140%;
+}
+
 .container {
     padding-top: 44px;
     font-family: Roboto, arial, sans-serif;
+}
+
+.ui-select-match-item {
+    font-size: 10px !important;
 }
 
 .box {
@@ -404,6 +443,15 @@ textarea.form-control {
 
 .padding-top {
     padding-top: 10px;
+}
+
+.padding-top22 {
+    padding-top: 22px;
+}
+
+.link-target {
+    color: #337ab7;
+    cursor: pointer;
 }
 
 .margin-top {
@@ -929,11 +977,6 @@ table .tablesort-sortable:hover::after, table .tablesort-asc::after, table .tabl
     margin-right: 30px;
 }
 
-.header-bar a {
-    line-height: 44px;
-    font-size: 15px;
-    color: white;
-}
 
 .header-bar ul {
     list-style: none;

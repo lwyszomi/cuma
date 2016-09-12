@@ -15,22 +15,23 @@
 
 {% block container %}
     <div class="top10" ng-app="cumaApp" ng-controller="tableController as table">
-        <div class="form-horizontal" id="filters">
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="search">Search:</label>
-                <div class="col-sm-8">
+        <div class="row bottom30" id="filters">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>{% trans "Search" %}</label>
                     <div class="input-group">
-                      <input id="search" class="form-control" type="text" name="search" ng-model="table.searchField" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Email, Username"/>
-                      <span class="input-group-btn">
-                        <button class="btn btn-secondary" type="button" ng-click="table.searchField = ''"><i class="glyphicon glyphicon-remove"></i></button>
-                      </span>
+                        <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Email, Username"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" ng-click="table.searchFieldTmp = ''"><i
+                                    class="glyphicon glyphicon-remove"></i></button>
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Country:</label>
-                <div class="col-sm-8">
-                    <ui-select multiple ng-model="table.selectedCountries" theme="bootstrap" sortable="true" close-on-select="false">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label>{% trans "Country" %}</label>
+                    <ui-select multiple ng-model="table.selectedCountriesTmp" theme="bootstrap" sortable="true" close-on-select="false">
                         <ui-select-match placeholder="Select Country">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
                         <ui-select-choices repeat="country in table.countries | filter:$select.search">
                             {% verbatim %}{{ country.displayName }}{% endverbatim %}
@@ -38,49 +39,44 @@
                     </ui-select>
                 </div>
             </div>
-            <div class="form-group" ng-show="table.selectedCountries.length > 0">
-                <label class="col-sm-2 control-label">Sector:</label>
-                <div class="col-sm-8">
-                    <ui-select multiple ng-model="table.selectedSectors" theme="bootstrap" sortable="true" close-on-select="false">
-                        <ui-select-match placeholder="Select sector">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
-                        <ui-select-choices repeat="sector in table.sectors | filter:$select.search">
-                          {% verbatim %}{{ sector.displayName }}{% endverbatim %}
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
-            <div class="form-group" ng-show="table.selectedSectors.length > 0">
-                <label class="col-sm-2 control-label">User Group:</label>
-                <div class="col-sm-8">
-                    <ui-select multiple ng-model="table.selectedUserGroups" theme="bootstrap" sortable="true" close-on-select="false">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>{% trans "User Group" %}</label>
+                    <ui-select multiple ng-model="table.selectedUserGroupsTmp" theme="bootstrap" sortable="true"
+                               close-on-select="false">
                         <ui-select-match placeholder="Select user group">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
                         <ui-select-choices repeat="group in table.userGroups | orderBy:'displayName'| filter:$select.search">
-                          {% verbatim %}{{ group.displayName }}{% endverbatim %}
+                            {% verbatim %}{{ group.displayName }}{% endverbatim %}
                         </ui-select-choices>
                     </ui-select>
                 </div>
             </div>
-            <div class="form-group" ng-show="table.selectedCountries.length > 0">
-                <label class="col-sm-2 control-label">User Role:</label>
-                <div class="col-sm-8">
-                    <ui-select multiple ng-model="table.selectedUserRoles" theme="bootstrap" sortable="true" close-on-select="false">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label>{% trans "User Role" %}</label>
+                    <ui-select multiple ng-model="table.selectedUserRolesTmp" theme="bootstrap" sortable="true"
+                               close-on-select="false">
                         <ui-select-match placeholder="Select user role">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
                         <ui-select-choices repeat="group in table.userRoles | orderBy:'displayName'| filter:$select.search">
-                          {% verbatim %}{{ group.displayName }}{% endverbatim %}
+                            {% verbatim %}{{ group.displayName }}{% endverbatim %}
                         </ui-select-choices>
                     </ui-select>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">State:</label>
-                <div class="col-sm-8">
-                    <ui-select ng-model="table.selectedStatus" theme="bootstrap" sortable="true" close-on-select="true">
+            <div class="col-sm-1">
+                <div class="form-group">
+                    <label>{% trans "Status" %}</label>
+                    <ui-select ng-model="table.selectedStatusTmp" theme="bootstrap" sortable="true" close-on-select="true">
                         <ui-select-match>{% verbatim %}{{ $select.selected.text }}{% endverbatim %}</ui-select-match>
                         <ui-select-choices repeat="status in table.statuses">
-                          {% verbatim %}{{ status.text }}{% endverbatim %}
+                            {% verbatim %}{{ status.text }}{% endverbatim %}
                         </ui-select-choices>
                     </ui-select>
                 </div>
+            </div>
+            <div class="col-sm-1 padding-top22">
+                <button class="btn btn-primary" ng-click=table.search()>{% trans "Search" %}</button>
+                <span class="link-target" ng-click="table.clear()">{% trans "Clear all filters" %}</span>
             </div>
         </div>
         <table datatable="ng" dt-instance="table.dtInstanceCallback" dt-options="table.dtOptions" dt-column-defs="table.dtColumnDefs" class="table table-striped">
@@ -94,7 +90,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="user in table.users | bySearch:table.searchField | byCountry:table.selectedCountries | bySector:table.selectedSectors | byUserGroup:table.selectedUserGroups | byUserRoles:table.selectedUserRoles | byStatus:table.selectedStatus">
+                <tr ng-repeat="user in table.users | bySearch:table.searchField | byCountry:table.selectedCountries | byUserGroup:table.selectedUserGroups | byUserRoles:table.selectedUserRoles | byStatus:table.selectedStatus">
                     <td>
                         <p>
                         {% verbatim %}

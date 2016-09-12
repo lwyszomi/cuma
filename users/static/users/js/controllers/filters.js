@@ -2,7 +2,7 @@ angular.module('cumaApp').filter('bySearch', function() {
     return function(items, search) {
         if (search === void(0) || search.length === 0) return items;
         return items.filter(function (item) {
-            return (item.displayName.indexOf(search) !== -1 || item.username.indexOf(search) !== -1)
+            return (item.displayName.toLowerCase().indexOf(search.toLowerCase()) !== -1 || item.username.toLowerCase().indexOf(search.toLowerCase()) !== -1)
         });
 
     }
