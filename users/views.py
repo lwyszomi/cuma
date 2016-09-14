@@ -2,7 +2,6 @@ from django.http import JsonResponse
 from django.urls.base import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
-import math
 import users.queries as queries
 from collections import defaultdict
 from django.conf import settings
@@ -12,7 +11,14 @@ from accounts.mixins import LoginRequiredMixin
 from users.utils import generate_user_view_format, generate_hierarchy
 
 
-class UserListView(LoginRequiredMixin, TemplateView):
+class BaseView(LoginRequiredMixin, TemplateView):
+
+    def get_context_data(self, **kwargs):
+        kwargs['dhis_url'] = settings.DHIS2_URL
+        return super(BaseView, self).get_context_data(**kwargs)
+
+
+class UserListView(BaseView):
 
     template_name = 'users/index.html'
 
@@ -25,7 +31,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
         return super(UserListView, self).get_context_data(**kwargs)
 
 
-class ShowUserView(LoginRequiredMixin, TemplateView):
+class ShowUserView(BaseView):
 
     template_name = 'users/show_user.html'
 

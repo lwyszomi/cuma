@@ -37,23 +37,13 @@ def generate_hierarchy():
     roles = queries.get_user_roles()
     for country in countries:
         country['roles'] = []
-        sec = []
+        country['groups'] = []
         if 'code' not in country:
             continue
         for role in roles:
             if country['code'] in role['displayName']:
-                sector = role['displayName'].split(": %s- " % country['code'])
-                if len(sector) == 2:
-                    sec.append(sector[1])
                 country['roles'].append(role)
-        sectors = []
-        for s in sec:
-            g = []
-            for group in groups:
-                if country['code'] in group['displayName'] and s in group['displayName']:
-                    g.append(group)
-            sectors.append(dict(displayName=s, groups=g))
-
-        country['sectors'] = sectors
-
+        for group in groups:
+            if country['code'] in group['displayName']:
+                country['groups'].append(group)
     return countries
