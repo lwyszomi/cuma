@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import redirect, get_object_or_404
 from django.urls.base import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
@@ -8,6 +9,8 @@ from django.conf import settings
 import json
 
 from accounts.mixins import LoginRequiredMixin
+from accounts.models import DHIS2User
+from dhis2.utils import get_client
 from users.utils import generate_user_view_format, generate_hierarchy
 
 
@@ -50,6 +53,10 @@ class ShowUserView(BaseView):
                 org_dict[org['displayName']] = []
 
         kwargs['dhis_user'] = user
+
+        client = get_client()
+
+        kwargs['user_language'] = client.get_user_ui_language(user['userCredentials']['username'])
         kwargs['organizations'] = dict(org_dict)
         return super(ShowUserView, self).get_context_data(**kwargs)
 
@@ -104,3 +111,17 @@ class SaveUserView(View):
             return JsonResponse(data={'redirect': reverse('show_user', kwargs={'user_id': user['id']})})
         else:
             return JsonResponse(data={'error': 'Error'})
+
+
+class SaveLanguage(View):
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super(SaveLanguage, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        language_code = request.POST['language_code']
+        client = get_client()
+        user = queries.get_user(kwargs['user_id'])
+        client.change_language(user['userCredentials']['username'], language_code)
+        return redirect('show_user', user_id=kwargs['user_id'])

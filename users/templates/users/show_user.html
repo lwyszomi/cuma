@@ -71,12 +71,43 @@
                     <label for="user_roles" class="col-sm-2 control-label">Interface Language:</label>
                     <div id="user_roles" class="col-sm-10">
                         <div class="box">
-                            Coming soon.
-                            {# TODO: Add language#}
+                            {{ user_language | language_name }}
+                            <button data-toggle="modal" data-target="#languageModal" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="languageModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Select user's Interface Language</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <form action="{% url 'save_language' dhis_user.id %}" method="POST">
+                            <div>
+                                <select name="language_code" class="form-control">
+                                    {% get_available_languages as LANGUAGES %}
+                                    {% for language in LANGUAGES %}
+                                        <option value="{{ language.0 }}" {% if language.0 == user_language %}selected{% endif %}>
+                                            {{ language.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="text-center row">
+                                <input type="submit" class="btn btn-primary" value="Save"/>
+                            </div>
+                        </form>
+                    </p>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 {% endblock container %}

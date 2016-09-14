@@ -108,6 +108,25 @@ class DHIS2Client(object):
         })
         return groups.json()['userRoles']
 
+    def get_user_ui_language(self, username):
+        response = self.session.get(self.url + 'userSettings/keyUiLocale', params={
+            'user': username
+        })
+
+        if response.status_code == 200:
+            return response.text
+        else:
+            return 'en'
+
+    def change_language(self, username, language_code):
+        response1 = self.session.post(
+            self.url + 'userSettings/keyUiLocale?user={}&value={}'.format(username, language_code)
+        )
+        response2 = self.session.post(
+            self.url + 'userSettings/keyDbLocale?user={}&value={}'.format(username, language_code)
+        )
+        return response1.status_code == 200 and response2.status_code == 200
+
     def save_user(self, user):
         session = self.session
         headers = {'content-type': 'application/json'}
