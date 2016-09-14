@@ -3,6 +3,8 @@ from django.contrib.gis.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
+from dhis2.utils import get_client
+
 
 class DHIS2UserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, first_name=None, last_name=None):
@@ -77,6 +79,15 @@ class DHIS2User(AbstractBaseUser):
 
     def has_module_perms(self, module):
         return True
+
+    @property
+    def ui_language(self):
+        client = get_client()
+        return client.get_user_ui_language(self.username)
+
+    def change_language(self, language_code):
+        client = get_client()
+        client.change_language(self.username, language_code)
 
     def __str__(self):
         return self.get_full_name()

@@ -108,7 +108,57 @@
                         {% endfor %}
                     </div>
                 </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="languages" class="col-sm-2 control-label">Interface Language:</label>
+                        <div id="languages" class="col-sm-10">
+                            <div class="col-sm-5 box">
+                                {{ user_language | language_name }}
+                                <a data-toggle="modal" data-target="#languageModal" class="pencil">
+                                    <span class="glyphicon glyphicon-pencil pencil" aria-hidden="true"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <div id="languageModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Select user's Interface Language</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <form action="{% url 'save_language' dhis_user.id %}" method="POST">
+                            <div>
+                                <select name="language_code" class="form-control">
+                                    {% get_available_languages as LANGUAGES %}
+                                    {% for language in LANGUAGES %}
+                                        <option value="{{ language.0 }}" {% if language.0 == user_language %}selected{% endif %}>
+                                            {{ language.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="text-center row margin-top">
+                                <input id="save-button" type="submit" class="btn btn-primary" value="Save"/>
+                            </div>
+                        </form>
+                    </p>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <script type="application/javascript">
+        $('#save-button').click(function() {
+            var $this = $(this);
+            $this.attr('disabled', true);
+            $this.val('Saving...');
+            $this.parents('form').submit();
+        });
+    </script>
 {% endblock container %}
