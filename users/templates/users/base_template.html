@@ -35,8 +35,8 @@
                     {% if user.is_staff %}
                         <li class="pull-left"><a href="{% url 'admin:index' %}">Admin</a></li>
                     {% endif %}
+                    <li id="profileButton"><a id="profileLink" class="header-text-right" href="{% url 'show_user' user.external_id %}"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
                 {% endif %}
-                <li id="profileButton"><a id="profileLink" class="header-text-right" href="{% url 'show_user' user.external_id %}"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
             </ul>
         </div>
         <div class="container">
