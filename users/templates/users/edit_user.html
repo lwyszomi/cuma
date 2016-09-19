@@ -32,9 +32,9 @@
             <hr>
         </div>
         <div class="bread-crumb clearfix">
-            <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
-            <div><span ng-class="{complete:ctrl.activeStep > 1 && (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 2}" ><i class="fa fa-check" ></i> 2. <span >Assign User Group</span></span></div>
-            <div><span ng-class="{complete:false, active: ctrl.activeStep === 3}" ><i class="fa fa-check" ></i> 3. <span >Assign IRC Roles</span></span></div>
+            <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ng-click="ctrl.goToStep(1)"><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
+            <div><span ng-class="{complete:ctrl.activeStep > 1 || (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 2}" ng-click="ctrl.goToStep(2)"><i class="fa fa-check" ></i> 2. <span >Assign IRC Roles</span></span></div>
+            <div><span ng-class="{complete:ctrl.activeStep > 2 || (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 3}" ng-click="ctrl.goToStep(3)"><i class="fa fa-check" ng-click="ctrl.goToStep(3)"></i> 3. <span >Assign User Groups</span></span></div>
         </div>
 
         <div ng-show="ctrl.activeStep === 1">
@@ -53,7 +53,7 @@
             </div>
             <div class="action-row" >
                 <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length === 0" ng-click="ctrl.goToStep(2)" >
-                    <span>{% trans 'Next' %}</span>
+                    <span>{% trans 'Assign Units' %}</span>
                 </button>
                 <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
             </div>
@@ -132,7 +132,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-7">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-4">
                     <div class="box">
                         <div class="center">
                             <label><span>{% trans "Current Roles Assigned" %}</span></label>
@@ -150,7 +151,7 @@
             </div>
             <div class="action-row">
                 <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userCredentials.userRoles.length === 0 && ctrl.newRoles.length === 0" ng-click="ctrl.goToStep(3)" >
-                    <span>{% trans 'Next' %}</span>
+                    <span>{% trans 'Assign Roles' %}</span>
                 </button>
                 <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
             </div>
@@ -182,7 +183,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-7">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-4">
                     <div class="box">
                         <div class="center">
                             <label><span>{% trans "Current Roles Assigned" %}</span></label>
@@ -200,7 +202,7 @@
             </div>
             <div class="action-row">
                 <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userGroups.length === 0 && ctrl.newGroups.length === 0" ng-click="ctrl.save()" >
-                    <span>{% trans 'Save User' %}</span>
+                    <span>{% trans 'Assign Groups' %}</span>
                 </button>
                 <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
             </div>

@@ -81,7 +81,7 @@ body {
 .header-text {
     position: absolute;
     top: 12px;
-    left: 175px;
+    left: 10px;
     font-weight: bold;
     color: #FDC82F;
     font-size: 16px;
@@ -92,7 +92,7 @@ body {
 .header-text-right {
     position: absolute;
     top: 12px;
-    right: 175px;
+    right: 10px;
     font-weight: bold;
     color: #FDC82F;
     font-size: 16px;
