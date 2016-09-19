@@ -29,7 +29,7 @@
     </head>
     <body>
         <div class="header-bar" id="header">
-            <span><a class="header-text" id="headerText" href="{{ dhis_url }}">COMET | User Management</a></span>
+            <span class="header-text" id="headerText"><a class="header-link" href="{{ dhis_url }}">COMET</a> | User Management</span>
             <ul class="right-nav pull-right">
                 {% if user.is_authenticated %}
                     {% if user.is_staff %}

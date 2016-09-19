@@ -6,6 +6,10 @@ body {
     width: 100% !important;
 }
 
+.dataTables_info {
+    margin-left: 50px;
+}
+
 .container {
     width: 80% !important;
 }
@@ -14,8 +18,8 @@ body {
     min-height: 34px !important;
 }
 
-.bottom30 {
-    margin-bottom: 30px;
+.bottom20 {
+    margin-bottom: 20px;
 }
 
 .ui-select-choices-row {
@@ -64,6 +68,14 @@ body {
 
 .top70 {
     margin-top: 30px;
+}
+
+.header-link {
+    font-weight: bold;
+    color: #FDC82F;
+    font-size: 16px;
+    font-family: LiberationSans, arial, sans-serif;
+    line-height: 140%;
 }
 
 .header-text {
@@ -125,6 +137,10 @@ body {
 
 .margin-bottom-10 {
     margin-bottom: 10px;
+}
+
+.margin-bottom5 {
+    margin-bottom: 5px !important;
 }
 
 /* Message colors */
