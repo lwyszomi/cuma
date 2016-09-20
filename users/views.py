@@ -39,18 +39,39 @@ class ShowUserView(BaseView):
         user = queries.get_user(kwargs['user_id'])
         organizations = user['organisationUnits']
         org_dict = defaultdict(list)
+        user_roles = user['userCredentials']['userRoles']
+        user_groups = user['userGroups']
+        country_list = []
         for org in organizations:
             country = None
             if len(org['ancestors']) >= settings.COUNTRY_LEVEL:
                 country = org['ancestors'][settings.COUNTRY_LEVEL-1]
 
             if country:
+                country_list.append(country)
                 org_dict[country['displayName']].append(org['displayName'])
+
             else:
                 org_dict[org['displayName']] = []
 
+        roles = {}
+        groups = {}
+        for country in country_list:
+            r = []
+            g = []
+            for role in user_roles:
+                if country['code'] in role['displayName']:
+                    r.append(role['displayName'])
+            for group in user_groups:
+                if country['code'] in group['displayName']:
+                    g.append(group['displayName'])
+            roles[country['displayName']] = r
+            groups[country['displayName']] = g
+
         kwargs['dhis_user'] = user
         kwargs['organizations'] = dict(org_dict)
+        kwargs['roles'] = dict(roles)
+        kwargs['groups'] = dict(groups)
         return super(ShowUserView, self).get_context_data(**kwargs)
 
 
