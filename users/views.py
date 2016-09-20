@@ -59,6 +59,8 @@ class ShowUserView(BaseView):
         for country in country_list:
             r = []
             g = []
+            if 'code' not in country:
+                continue
             for role in user_roles:
                 if country['code'] in role['displayName']:
                     r.append(role['displayName'])

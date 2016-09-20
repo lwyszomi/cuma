@@ -41,6 +41,20 @@ body {
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
+.btn {
+    white-space: normal !important;
+}
+
+.ui-select-bootstrap .ui-select-choices-row>span {
+    white-space: normal !important;
+}
+
+.pencil {
+    cursor: pointer;
+    z-index: 1;
+    float: right;
+    font-size: 12px !important;
+}
 
 .top5 {
     margin-top: 5px;

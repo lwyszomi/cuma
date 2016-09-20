@@ -68,6 +68,8 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
     }, function(newValue, oldValue) {
         if (newValue.length !== oldValue.length){
             vm.sectors = [];
+            vm.userRoles = [];
+            vm.userGroups = [];
             newValue.forEach(function (val) {
                 vm.userRoles.push.apply(vm.userRoles, val.roles);
                 vm.userGroups.push.apply(vm.userGroups, val.groups);
@@ -84,7 +86,6 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
                 });
                 vm.selectedUserRoles = selectedUserRoles;
             }
-            // vm.dtInstance.rerender();
         }
     });
 });
