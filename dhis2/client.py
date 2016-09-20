@@ -113,3 +113,35 @@ class DHIS2Client(object):
         headers = {'content-type': 'application/json'}
         save = session.put(user['href'], data=json.dumps(user), headers=headers)
         return save
+
+    def update_user(self, user):
+        session = self.session
+        headers = {'content-type': 'application/json'}
+        update = session.patch(user['href'], data=json.dumps(user), headers=headers)
+        return update
+
+    def get_dashboard_role(self):
+        session = self.session
+        groups = session.get(self.url + 'userRoles.json', params={
+            'fields': 'displayName,id',
+            'filter': 'displayName:ilike:%s' % 'Dashboard',
+            'paging': 'false'
+        })
+        return groups.json()['userRoles']
+
+    def get_users_without_role(self, role_id):
+        session = self.session
+        fields = [
+            'id',
+            'displayName',
+            'userCredentials[disabled,username,userRoles[displayName,id]]',
+            'organisationUnits[displayName,level,id,ancestors[displayName,id,level]]',
+            'userGroups[id,displayName]',
+            'href'
+        ]
+        response = session.get(self.url + 'users.json', params={
+            'fields': ','.join(fields),
+            'filer': 'userCredentials[userRoles[displayName]]:!eq%s' % role_id,
+            'paging': 'false'
+        })
+        return response.json()['users']

@@ -41,3 +41,18 @@ def get_role_by_name(role_name):
 def save_user(user):
     dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
     return dhis_client.save_user(user)
+
+
+def update_user(user):
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.update_user(user)
+
+
+def get_dashboard_role():
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.get_dashboard_role()
+
+
+def get_users_without_role(role_id):
+    dhis_client = DHIS2Client(settings.DHIS2_API_URL, settings.DHIS2_USERNAME, settings.DHIS2_PASSWORD)
+    return dhis_client.get_users_without_role(role_id)
