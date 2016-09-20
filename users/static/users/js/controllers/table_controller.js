@@ -1,6 +1,6 @@
 angular.module('cumaApp').controller('tableController', function($scope, usersConfig, DTDefaultOptions, DTColumnDefBuilder) {
     var vm = this;
-    vm.dtOptions = DTDefaultOptions.setDOM('<li<t>p>').setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': ' of _TOTAL_ users'});
+    vm.dtOptions = DTDefaultOptions.setDOM('<li<t>p>').setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': 'of _TOTAL_ users'});
     vm.allUsers = usersConfig.users;
     vm.users = usersConfig.users;
     vm.countries = usersConfig.countries;

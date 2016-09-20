@@ -15,7 +15,7 @@
 
 {% block container %}
     <div class="top10" ng-app="cumaApp" ng-controller="tableController as table">
-        <div class="row bottom30" id="filters">
+        <div class="row" id="filters">
             <div class="col-sm-3">
                 <div class="form-group">
                     <label>{% trans "Search" %}</label>
@@ -75,7 +75,7 @@
                 </div>
             </div>
             <div class="col-sm-1 padding-top22">
-                <button class="btn btn-primary" ng-click=table.search()>{% trans "Search" %}</button>
+                <button class="btn btn-primary margin-bottom5" ng-click=table.search()>{% trans "Search" %}</button>
                 <span class="link-target" ng-click="table.clear()">{% trans "Clear all filters" %}</span>
             </div>
         </div>
