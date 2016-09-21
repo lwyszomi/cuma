@@ -40,7 +40,6 @@
                         {% if not organizations %}
                             <div class="col-sm-5 box">
                                 <h4>{% trans "No Org Units assigned" %} <span class="glyphicon glyphicon-pencil pencil" ng-click="ctrl.goToEdit()"></span></h4>
-
                             </div>
                         {% endif %}
                         {% for key, val in organizations.items %}
@@ -151,9 +150,9 @@
                         </form>
                     </p>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
     <script type="application/javascript">
         $('#languageModal').find('.save-button').click(function() {
             var $this = $(this);

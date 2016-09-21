@@ -55,7 +55,7 @@
                 <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length === 0" ng-click="ctrl.goToStep(2)" >
                     <span>{% trans 'Assign Units' %}</span>
                 </button>
-                <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
+                <a data-toggle="modal" data-target="#myModal" >{% trans 'Return to User List' %}</a>
             </div>
         </div>
         <div ng-show="ctrl.activeStep === 2">
@@ -126,8 +126,8 @@
                                 </span>
                             </div>
                             <div>
-                                <span ng-show="item.show_error"> * Role doesn't exist in DHIS system!</span>
-                                <span ng-show="item.role_exist"> * Role already assigned!</span>
+                                <span ng-show="item.show_error"> {% trans "* Sorry, no User Roles are available for this sector" %}</span>
+                                <span ng-show="item.role_exist"> {% trans "* Role already assigned!" %}</span>
                                 <button ng-show="item.show_button" class="add_role_button btn-xs btn-success" ng-click="ctrl.newRole(item)"><span class="glyphicon glyphicon-plus"></span> {% trans "New Role" %}</button>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                 <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userCredentials.userRoles.length === 0 && ctrl.newRoles.length === 0" ng-click="ctrl.goToStep(3)" >
                     <span>{% trans 'Assign Roles' %}</span>
                 </button>
-                <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
+                <a data-toggle="modal" data-target="#myModal">{% trans 'Return to User List' %}</a>
             </div>
         </div>
         <div ng-show="ctrl.activeStep === 3">
@@ -205,8 +205,29 @@
                 <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userGroups.length === 0 && ctrl.newGroups.length === 0" ng-click="ctrl.save()" >
                     <span>{% trans 'Assign Groups' %}</span>
                 </button>
-                <a href="{% url 'users' %}" >{% trans 'Return to User List' %}</a>
+                <a data-toggle="modal" data-target="#myModal" >{% trans 'Return to User List' %}</a>
             </div>
+        </div>
+
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{% trans "You will lose all unsaved changes" %}</h4>
+              </div>
+              <div class="modal-body">
+                <p>{% trans "Are you sure you want to leave this page!" %}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Stay on page" %}</button>
+                <a type="button" class="btn btn-primary" href="{% url 'users' %}">{% trans "Leave this Page" %}</a>
+              </div>
+            </div>
+
+          </div>
         </div>
     </div>
 {% endblock container %}
