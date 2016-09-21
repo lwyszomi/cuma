@@ -29,6 +29,7 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
     vm.splitOrganisation();
 
     vm.goToStep = function goToStep(step) {
+        vm.getCountries();
         vm.activeStep = step;
     };
 
@@ -46,7 +47,11 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
                 if (response.data['role'].length > 0) {
                     role = response.data['role'][0];
                     item.show_error = false;
-                    vm.newRoles.push(role);
+                    if (vm.newRoles.indexOf(role) !== -1 && vm.dhis_user.userCredentials.userRoles.indexOf(role) !== -1) {
+                        vm.newRoles.push(role)
+                    } else {
+                        item.role_exist = true
+                    }
                     item.show_button = true;
                 } else {
                     item.show_error = true;
@@ -68,6 +73,16 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
             vm.dhis_user.userCredentials.userRoles.splice(indexInUser, 1)
         } else if (indexInNewRoles !== -1) {
             vm.newRoles.splice(indexInNewRoles, 1)
+        }
+    };
+
+    vm.removeGroup = function(group) {
+        var indexInUser = vm.dhis_user.userGroups.indexOf(group);
+        var indexInNewRoles = vm.newGroups.indexOf(group);
+        if (indexInUser !== -1) {
+            vm.dhis_user.userGroups.splice(indexInUser, 1)
+        } else if (indexInNewRoles !== -1) {
+            vm.userRoles.splice(indexInNewRoles, 1)
         }
     };
 

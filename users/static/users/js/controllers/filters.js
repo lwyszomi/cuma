@@ -83,13 +83,14 @@ angular.module('cumaApp').filter('bySearch', function() {
 
     }
 }).filter('groupsByCountry', function() {
-    return function(items, selected) {
+    return function(items, selected, assigned, newGroups) {
         var filteredItems = [];
         var codes = selected.map(function(item, index) { return item.code});
-
+        var currentAssigned = assigned.concat(newGroups);
+        var ids = currentAssigned.map(function (item, index) { return item.id });
         items.forEach(function(item) {
             codes.forEach(function(code) {
-                if (item.displayName.indexOf(code) !== -1 && filteredItems.indexOf(item) === -1) {
+                if (item.displayName.indexOf(code) !== -1 && ids.indexOf(item['id']) === -1 && filteredItems.indexOf(item) === -1) {
                     filteredItems.push(item)
                 }
             })
