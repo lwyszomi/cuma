@@ -56,6 +56,7 @@ class ShowUserView(BaseView):
                 org_dict[country['displayName']].append(org['displayName'])
 
             else:
+                country_list.append(org)
                 org_dict[org['displayName']] = []
 
         roles = {}

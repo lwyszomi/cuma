@@ -26,6 +26,10 @@ body {
     font-size: 10px !important;
 }
 
+a.btn-primary {
+    color: #FFFFFF !important;
+}
+
 .header-bar {
     background-color: #0f0f0f;
     height: 44px;
@@ -117,6 +121,12 @@ a.pencil {
     font-size: 16px;
     font-family: LiberationSans, arial, sans-serif;
     line-height: 140%;
+    width: 72px;
+}
+
+.dropdown-menu {
+    position: inherit !important;
+    top: 35px !important;
 }
 
 .container {
