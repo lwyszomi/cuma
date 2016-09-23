@@ -67,8 +67,7 @@ class DHIS2Client(object):
             'fields': 'displayName,code,id,level,%s' % fields,
             'paging': 'false',
             'filter': [
-                'level:eq:%d' % settings.COUNTRY_LEVEL,
-                'displayName:in:[Burma/Myanmar,Pakistan,Jordan]' # TODO Remove this before deploy on production
+                'level:eq:%d' % settings.COUNTRY_LEVEL
             ]
         })
 
