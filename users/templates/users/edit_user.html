@@ -105,7 +105,7 @@
                                    </button>
                                 </span>
                             </div>
-                            <div ng-show="item.country.selected !== undefined" class="input-group margin-bottom-10">
+                            <div ng-show="item.country.selected !== undefined && item.country.selected.sectors.length > 0" class="input-group margin-bottom-10">
                                 <ui-select allow-clear ng-model="item.sector.selected" on-select="ctrl.addRole(item)" theme="bootstrap">
                                     <ui-select-match placeholder="Choose Sector">
                                         {% verbatim %}
@@ -124,6 +124,9 @@
                                         <span class="glyphicon glyphicon-remove"></span>
                                    </button>
                                 </span>
+                            </div>
+                            <div ng-show="item.country.selected !== undefined && item.country.selected.sectors.length === 0" >
+                                <span>{% trans "Sorry, no Sectors for this Country" %}</span>
                             </div>
                             <div>
                                 <span ng-show="item.show_error"> {% trans "* Sorry, no User Roles are available for this sector" %}</span>

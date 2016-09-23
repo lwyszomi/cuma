@@ -47,10 +47,12 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
                 if (response.data['role'].length > 0) {
                     role = response.data['role'][0];
                     item.show_error = false;
-                    if (vm.newRoles.indexOf(role) !== -1 && vm.dhis_user.userCredentials.userRoles.indexOf(role) !== -1) {
-                        vm.newRoles.push(role)
+                    var ids = vm.newRoles.concat(vm.dhis_user.userCredentials.userRoles).map(function(item, index) { return item.id});
+                    if (ids.indexOf(role.id) === -1) {
+                        vm.newRoles.push(role);
+                        item.role_exist = false;
                     } else {
-                        item.role_exist = true
+                        item.role_exist = true;
                     }
                     item.show_button = true;
                 } else {
@@ -165,7 +167,6 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
             function(successCallback) {
                 window.location = successCallback.data.redirect;
             }, function(errorCallback) {
-                alert("Error")
             }
         )
     }

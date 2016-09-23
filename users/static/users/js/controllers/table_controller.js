@@ -17,7 +17,7 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
         {'val': 1, 'text': 'Active'},
         {'val': 0, 'text': 'Inactive'}
     ];
-
+    vm.redColor = false;
     vm.searchFieldTmp = '';
     vm.selectedCountriesTmp = [];
     vm.selectedStatusTmp = {"val": -1, "text": "All"};
@@ -67,6 +67,7 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
         return vm.selectedCountriesTmp;
     }, function(newValue, oldValue) {
         if (newValue.length !== oldValue.length){
+            vm.redColor = false;
             vm.sectors = [];
             vm.userRoles = [];
             vm.userGroups = [];
@@ -88,4 +89,23 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
             }
         }
     });
+
+    vm.setRed = function() {
+        if (vm.userGroups.length == 0 && vm.userRoles.length) {
+            vm.redColor = true;
+        }
+    }
+}).directive('inputTextClick', function() {
+    return {
+        restrict: 'A',
+        scope: true,
+        link: function(scope, element) {
+            angular.element(element.find('input')[0]).bind('click', function() {
+                var table = scope.$parent.table;
+                if (table.selectedCountriesTmp.length == 0) {
+                    table.redColor = true;
+                }
+            });
+        }
+    };
 });

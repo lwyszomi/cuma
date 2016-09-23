@@ -124,9 +124,13 @@ a.pencil {
     width: 72px;
 }
 
-.dropdown-menu {
+.dropdown-menu-profile {
     position: inherit !important;
     top: 35px !important;
+}
+
+.red {
+    border-color: red !important;
 }
 
 .container {
