@@ -67,8 +67,7 @@ class DHIS2Client(object):
             'fields': 'displayName,code,id,level,%s' % fields,
             'paging': 'false',
             'filter': [
-                'level:eq:%d' % settings.COUNTRY_LEVEL,
-                'displayName:in:[Burma/Myanmar,Pakistan,Jordan]' # TODO Remove this before deploy on production
+                'level:eq:%d' % settings.COUNTRY_LEVEL
             ]
         })
 
@@ -108,8 +107,52 @@ class DHIS2Client(object):
         })
         return groups.json()['userRoles']
 
+    def get_user_ui_language(self, username):
+        response = self.session.get(self.url + 'userSettings/keyUiLocale', params={
+            'user': username
+        })
+
+        if response.status_code == 200:
+            return response.text
+        else:
+            return 'en'
+
+    def change_language(self, username, language_code):
+        response1 = self.session.post(
+            self.url + 'userSettings/keyUiLocale?user={}&value={}'.format(username, language_code)
+        )
+        response2 = self.session.post(
+            self.url + 'userSettings/keyDbLocale?user={}&value={}'.format(username, language_code)
+        )
+        return response1.status_code == 200 and response2.status_code == 200
+
     def save_user(self, user):
         session = self.session
         headers = {'content-type': 'application/json'}
         save = session.put(user['href'], data=json.dumps(user), headers=headers)
         return save
+
+    def get_dashboard_role(self):
+        session = self.session
+        groups = session.get(self.url + 'userRoles.json', params={
+            'fields': 'displayName,id',
+            'filter': 'displayName:ilike:%s' % 'Dashboard',
+            'paging': 'false'
+        })
+        return groups.json()['userRoles']
+
+    def get_users_without_role(self, role_id):
+        session = self.session
+        fields = [
+            'id',
+            'firstName',
+            'surname',
+            'userCredentials[username,userRoles[id]]',
+            'href'
+        ]
+        response = session.get(self.url + 'users.json', params={
+            'fields': ','.join(fields),
+            'filter': 'userCredentials.userRoles.id:!eq%s' % role_id,
+            'paging': 'false'
+        })
+        return response.json()['users']

@@ -145,6 +145,12 @@ AUTHENTICATION_BACKENDS = (
     'dhis2.auth.DHIS2Authentication',
 )
 
+LANGUAGES = [
+    ('en', 'English'),
+    ('fr', 'French'),
+    ('ar', 'Arabic')
+]
+
 
 try:
     from localsettings import *

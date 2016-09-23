@@ -6,6 +6,10 @@ body {
     width: 100% !important;
 }
 
+.dataTables_info {
+    margin-left: 50px;
+}
+
 .container {
     width: 80% !important;
 }
@@ -14,12 +18,16 @@ body {
     min-height: 34px !important;
 }
 
-.bottom30 {
-    margin-bottom: 30px;
+.bottom20 {
+    margin-bottom: 20px;
 }
 
 .ui-select-choices-row {
     font-size: 10px !important;
+}
+
+a.btn-primary {
+    color: #FFFFFF !important;
 }
 
 .header-bar {
@@ -36,6 +44,25 @@ body {
 .form-horizontal .form-group {
     margin-left: 0 !important;
     margin-right: 0 !important;
+}
+.btn {
+    white-space: normal !important;
+}
+
+.ui-select-bootstrap .ui-select-choices-row>span {
+    white-space: normal !important;
+}
+
+.pencil {
+    cursor: pointer;
+    z-index: 1;
+    float: right;
+    font-size: 12px !important;
+}
+
+a.pencil {
+    text-decoration: none;
+    color: #333;
 }
 
 .top5 {
@@ -66,10 +93,18 @@ body {
     margin-top: 30px;
 }
 
+.header-link {
+    font-weight: bold;
+    color: #FDC82F;
+    font-size: 16px;
+    font-family: LiberationSans, arial, sans-serif;
+    line-height: 140%;
+}
+
 .header-text {
     position: absolute;
     top: 12px;
-    left: 175px;
+    left: 10px;
     font-weight: bold;
     color: #FDC82F;
     font-size: 16px;
@@ -80,12 +115,22 @@ body {
 .header-text-right {
     position: absolute;
     top: 12px;
-    right: 175px;
+    right: 10px;
     font-weight: bold;
     color: #FDC82F;
     font-size: 16px;
     font-family: LiberationSans, arial, sans-serif;
     line-height: 140%;
+    width: 72px;
+}
+
+.dropdown-menu-profile {
+    position: inherit !important;
+    top: 35px !important;
+}
+
+.red {
+    border-color: red !important;
 }
 
 .container {
@@ -125,6 +170,10 @@ body {
 
 .margin-bottom-10 {
     margin-bottom: 10px;
+}
+
+.margin-bottom5 {
+    margin-bottom: 5px !important;
 }
 
 /* Message colors */
