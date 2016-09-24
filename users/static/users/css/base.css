@@ -2,6 +2,23 @@ body {
     font-size: 12px !important;
 }
 
+table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
+    display: inherit !important;
+    right: inherit !important;
+}
+
+table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
+    display: initial !important;
+}
+
+table.table thead .sorting_asc:before {
+    display: none !important;
+}
+
+table.table thead .sorting_desc:before {
+    display: none !important;
+}
+
 .form-inline .form-control {
     width: 100% !important;
 }

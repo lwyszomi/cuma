@@ -23,7 +23,7 @@ def generate_user_view_format(users):
             username=u['userCredentials']['username'],
             status='Inactive' if u['userCredentials']['disabled'] else "Active",
             show_url=reverse('show_user', kwargs={'user_id': u['id']}),
-            edit_url=reverse('edit_user', kwargs={'user_id': u['id']}),
+            edit_url=reverse('edit_user', kwargs={'user_id': u['id'], 'step': 1}),
             countries=countries.values(),
             userGroups=u['userGroups'],
             roles=u['userCredentials']['userRoles']

@@ -28,8 +28,8 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
         DTColumnDefBuilder.newColumnDef(0),
         DTColumnDefBuilder.newColumnDef(1),
         DTColumnDefBuilder.newColumnDef(2),
-        DTColumnDefBuilder.newColumnDef(3).withOption('searchable', false),
-        DTColumnDefBuilder.newColumnDef(4).notSortable().withOption('searchable', false)
+        DTColumnDefBuilder.newColumnDef(3),
+        DTColumnDefBuilder.newColumnDef(4).notSortable()
     ];
 
     vm.dtInstance = {};
