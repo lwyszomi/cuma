@@ -8,6 +8,7 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
     vm.roleUrl = editConfig.roleUrl;
     vm.saveUrl = editConfig.saveUrl;
     vm.usersUrl = editConfig.usersUrl;
+    vm.step = editConfig.step;
     vm.dataForTree = [];
     vm.selectedNodes = [];
     vm.activeStep = 1;
@@ -15,6 +16,7 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
     vm.nodeCountries = [];
     vm.newRoles = [];
     vm.newGroups = [];
+    vm.roles = editConfig.roleTypes;
 
     vm.splitOrganisation = function() {
         var array = [];
@@ -27,11 +29,6 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
     };
 
     vm.splitOrganisation();
-
-    vm.goToStep = function goToStep(step) {
-        vm.getCountries();
-        vm.activeStep = step;
-    };
 
     vm.addRole = function(item) {
         if (item.role !== void(0) && item.country !== void(0) && item.sector !== void(0)) {
@@ -92,14 +89,6 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
         {"show_button": false, "show_error": false}
     ];
 
-    // TODO move this to database
-    vm.roles = [
-        {"name": "Analytics"},
-        {"name": "Pivot Table"},
-        {"name": "Aggregate Data Entry"},
-        {"name": "Individual Data Entry"}
-    ];
-
     vm.findNested = function(obj, key, memo) {
         var i,
             proto = Object.prototype,
@@ -158,6 +147,13 @@ angular.module('cumaApp').controller('editController', function($scope, $http, e
             vm.getCountries()
         }
     });
+
+    vm.goToStep = function goToStep(step) {
+        vm.getCountries();
+        vm.activeStep = step;
+    };
+
+    vm.goToStep(vm.step);
 
     vm.save = function() {
         vm.dhis_user.userCredentials.userRoles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);

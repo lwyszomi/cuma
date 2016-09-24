@@ -11,7 +11,9 @@
             "userGroups": {{ userGroups|safe }},
             "roleUrl": "{% url 'get_role_by_name' %}",
             "saveUrl": "{% url 'save_user' %}",
-            "usersUrl": "{% url 'users' %}"
+            "usersUrl": "{% url 'users' %}",
+            "step": {{ step|safe }},
+            "roleTypes": {{ roleTypes|safe }}
         })
     </script>
     <script src="{% static 'users/js/controllers/filters.js' %}"></script>
@@ -112,7 +114,7 @@
                                             {{ $select.selected }}
                                         {% endverbatim %}
                                     </ui-select-match>
-                                    <ui-select-choices repeat="sector in item.country.selected.sectors">
+                                    <ui-select-choices repeat="sector in item.country.selected.sectors | bySelectedRolesForSector:item.role.selected:item.country.selected:ctrl.dhis_user.userCredentials.userRoles:ctrl.newRoles">
                                         {% verbatim %}
                                             {{ sector }}
                                         {% endverbatim %}
@@ -129,7 +131,7 @@
                                 <span>{% trans "Sorry, no Sectors for this Country" %}</span>
                             </div>
                             <div>
-                                <span ng-show="item.show_error"> {% trans "* Sorry, no User Roles are available for this sector" %}</span>
+                                <span ng-show="item.show_error"> {% trans "* Sorry, this role doesn't exist in DHIS system" %}</span>
                                 <span ng-show="item.role_exist"> {% trans "* Role already assigned!" %}</span>
                                 <button ng-show="item.show_button" class="add_role_button btn-xs btn-success" ng-click="ctrl.newRole(item)"><span class="glyphicon glyphicon-plus"></span> {% trans "New Role" %}</button>
                             </div>
@@ -191,7 +193,7 @@
                 <div class="col-sm-4">
                     <div class="box">
                         <div class="center">
-                            <label><span>{% trans "Current Roles Assigned" %}</span></label>
+                            <label><span>{% trans "Current Groups Assigned" %}</span></label>
                         </div>
                         <ul>
                             <li ng-repeat="group in groups = ctrl.dhis_user.userGroups.concat(ctrl.newGroups)">

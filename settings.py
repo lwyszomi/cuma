@@ -146,9 +146,32 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LANGUAGES = [
+    ('ar', 'Arabic'),
+    ('ar_EQ', 'Arabic (Egypt)'),
+    ('ar_IQ', 'Arabic (Iraq)'),
+    ('ar_SD', 'Arabic (Sudan)'),
+    ('bn', 'Bengali'),
+    ('bi', 'Bislama'),
+    ('my', 'Burmese'),
+    ('zh', 'Chinese'),
+    ('dz', 'Dzongkha'),
     ('en', 'English'),
     ('fr', 'French'),
-    ('ar', 'Arabic')
+    ('in_ID', 'Indonesian (Indonesia)'),
+    ('km', 'Khmer'),
+    ('rw', 'Kinyarwanda'),
+    ('ku', 'Kurdish'),
+    ('lo', 'Lao'),
+    ('mn', 'Mongolian'),
+    ('ne', 'Nepali'),
+    ('pt', 'Portuguese'),
+    ('pt_BR', 'Portuguese (Brazil)'),
+    ('ru', 'Russian'),
+    ('es', 'Spanish'),
+    ('tg', 'Tajik'),
+    ('tet', 'Tetum'),
+    ('ur', 'Urdu'),
+    ('vi', 'Vietnamese'),
 ]
 
 
