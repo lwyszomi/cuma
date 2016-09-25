@@ -97,4 +97,27 @@ angular.module('cumaApp').filter('bySearch', function() {
         });
         return filteredItems;
     }
+}).filter('bySelectedRolesForSector', function() {
+    return function(items, type, country, assigned, newRoles) {
+        var filteredItems = [];
+        if (type === void(0) || country === void(0)) {
+            return items;
+        }
+        var currentAssigned = assigned.concat(newRoles);
+        var sectors = [];
+        currentAssigned.forEach(function(item) {
+            if (item.displayName.indexOf(country.code) !== -1 && item.displayName.indexOf(type.name) !== -1) {
+                sectors.push(item.displayName.split('-')[1].trim())
+            }
+        });
+        if (sectors.length === 0) {
+            return items;
+        }
+        items.forEach(function(item) {
+            if (sectors.indexOf(item) === -1 && filteredItems.indexOf(item) === -1) {
+                filteredItems.push(item)
+            }
+        });
+        return filteredItems;
+    }
 });

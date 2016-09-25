@@ -12,6 +12,7 @@ import json
 
 from accounts.mixins import LoginRequiredMixin
 from dhis2.utils import get_client
+from users.models import RoleType
 from users.utils import generate_user_view_format, generate_hierarchy
 
 
@@ -106,6 +107,7 @@ class EditUserView(LoginRequiredMixin, TemplateView):
                         sectors.append(sector[1])
             org['sectors'] = list(set(sectors))
         user_groups = queries.get_user_groups()
+        kwargs['roleTypes'] = json.dumps([{'name': x.name} for x in RoleType.objects.all().order_by('name')])
         kwargs['dhis_user'] = json.dumps(user)
         kwargs['organisationUnits'] = json.dumps(organization_units)
         kwargs['countryLvl'] = settings.COUNTRY_LEVEL
