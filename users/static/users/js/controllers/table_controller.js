@@ -1,6 +1,18 @@
-angular.module('cumaApp').controller('tableController', function($scope, usersConfig, DTDefaultOptions, DTColumnDefBuilder) {
+angular.module('cumaApp').controller('tableController', function($scope, $filter, usersConfig, DTDefaultOptions,
+                                                                 DTOptionsBuilder, DTColumnBuilder) {
     var vm = this;
-    vm.dtOptions = DTDefaultOptions.setDOM('<li<t>p>').setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': 'of _TOTAL_ users'});
+    vm.dtOptions = DTOptionsBuilder.newOptions()
+        .withFnServerData(serverData)
+        .withDataProp('data')
+        .withOption('processing', true)
+        .withOption('serverSide', true)
+        .withOption('paging', true);
+
+
+    DTDefaultOptions
+        .setDOM('<li<t>p>')
+        .setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': 'of _TOTAL_ users'});
+
     vm.allUsers = usersConfig.users;
     vm.users = usersConfig.users;
     vm.countries = usersConfig.countries;
@@ -24,13 +36,84 @@ angular.module('cumaApp').controller('tableController', function($scope, usersCo
     vm.selectedUserGroupsTmp = [];
     vm.selectedUserRolesTmp = [];
 
-    vm.dtColumnDefs = [
-        DTColumnDefBuilder.newColumnDef(0),
-        DTColumnDefBuilder.newColumnDef(1),
-        DTColumnDefBuilder.newColumnDef(2),
-        DTColumnDefBuilder.newColumnDef(3),
-        DTColumnDefBuilder.newColumnDef(4).notSortable()
+    vm.usersFilters = [
+        function(array) {
+            return $filter('bySearch')(array, vm.searchField);
+        },
+        function(array) {
+            return $filter('byCountry')(array, vm.selectedCountries);
+        },
+        function(array) {
+            return $filter('byUserGroup')(array, vm.selectedUserGroups);
+        },
+        function(array) {
+            return $filter('byUserRoles')(array, vm.selectedUserRoles);
+        },
+        function(array) {
+            return $filter('byStatus')(array, vm.selectedStatus);
+        }
     ];
+
+    vm.dtColumnDefs = [
+        DTColumnBuilder.newColumn('displayName').withTitle('Name').renderWith(function(data, type, full) {
+             return data + '<br />' + full.roles.length + ' user roles';
+        }),
+        DTColumnBuilder.newColumn('countries').withTitle('Country').renderWith(function(data) {
+            return data.map(function(country) {
+                return country.displayName;
+            }).join(' ');
+        }),
+        DTColumnBuilder.newColumn('username').withTitle('Username'),
+        DTColumnBuilder.newColumn('status').withTitle('State'),
+        DTColumnBuilder.newColumn('show_url').withTitle('Actions').renderWith(function(data, type, full) {
+            return '<a href="' + data + '">Profile</a> | <a href="' + full.edit_url + '">Edit</a>';
+        }).notSortable()
+    ];
+
+    function serverData(sSource, aoData, fnCallback, oSettings) {
+        var draw = aoData[0].value;
+        var order = aoData[2].value;
+        var start = aoData[3].value;
+        var length = aoData[4].value;
+
+        var orderColumn = order[0].column;
+        var orderDir = order[0].dir;
+
+        var column = vm.dtColumnDefs[orderColumn].mData;
+
+        var renderFunc = vm.dtColumnDefs[orderColumn].mRender;
+
+        var filteredResults = vm.users;
+
+        vm.usersFilters.forEach(function(filter) {
+            filteredResults = filter(filteredResults);
+        });
+
+        vm.users.sort(function(x, y) {
+            if (renderFunc) {
+                x = renderFunc(x[column], null, x);
+                y = renderFunc(y[column], null, y);
+            } else {
+                x = x[column];
+                y = y[column];
+            }
+
+            if (orderDir == 'asc') {
+                return x.localeCompare(y);
+            } else {
+                return y.localeCompare(x);
+            }
+        });
+
+        var records = {
+            'draw': draw,
+            'recordsTotal': vm.users.length,
+            'recordsFiltered': filteredResults.length,
+            'data': filteredResults.slice(start, start + length)
+        };
+
+        fnCallback(records);
+    }
 
     vm.dtInstance = {};
 
