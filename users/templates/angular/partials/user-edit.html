@@ -1,0 +1,213 @@
+{% load i18n %}
+
+<div class="top10">
+    <a class="nav-link" ui-sref="users.list"><i class="glyphicon glyphicon-chevron-left"></i> <span>{%  trans 'User Management' %}</span></a>
+</div>
+
+<div class="user-edit-form" ng-cloak>
+    <div class="user_details">
+        <h2>{% verbatim %}{{ ctrl.dhis_user.displayName}}{% endverbatim %}</h2>
+        <span>{% verbatim %}{{ ctrl.dhis_user.userCredentials.username }}{% endverbatim %}</span>
+        <hr>
+    </div>
+    <div class="bread-crumb clearfix">
+        <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ng-click="ctrl.goToStep(1)"><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
+        <div><span ng-class="{complete:ctrl.activeStep > 1 || (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 2}" ng-click="ctrl.goToStep(2)"><i class="fa fa-check" ></i> 2. <span >Assign IRC Roles</span></span></div>
+        <div><span ng-class="{complete:ctrl.activeStep > 2 || (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 3}" ng-click="ctrl.goToStep(3)"><i class="fa fa-check" ng-click="ctrl.goToStep(3)"></i> 3. <span >Assign User Groups</span></span></div>
+    </div>
+
+    <div ng-show="ctrl.activeStep === 1">
+        <label class="section-label"><span>{% trans "Select Organization Units" %}</span>:</label>
+        <p>Countries chosen will 'filter' your choices in the next steps</p>
+        <div class="organisation-units section clearfix">
+            <div class="col-sm-4" ng-repeat="chunk in ctrl.organisationsInChunks">
+                <div class="row" ng-repeat="row in chunk">
+                    <treecontrol class="tree-light" tree-model="row" selected-nodes="ctrl.selectedNodes" options="ctrl.treeOptions">
+                        {% verbatim %}
+                            {{ node.displayName }}
+                        {% endverbatim %}
+                    </treecontrol>
+                </div>
+            </div>
+        </div>
+        <div class="action-row" >
+            <button class="btn btn-primary" ng-disabled="ctrl.selectedNodes.length === 0" ng-click="ctrl.goToStep(2)" >
+                <span>{% trans 'Assign Units' %}</span>
+            </button>
+            <a data-toggle="modal" data-target="#myModal" >{% trans 'Return to User List' %}</a>
+        </div>
+    </div>
+    <div ng-show="ctrl.activeStep === 2">
+        <div class="row">
+            <label class="section-label"><span>{% trans "Select User Roles" %}</span>:</label>
+            <div class="col-sm-5">
+                <div ng-repeat="item in ctrl.roleForms">
+                    <div class="box-without-border">
+                        <div class="input-group margin-bottom-10">
+                            <ui-select allow-clear ng-model="item.role.selected" on-select="item.sector.selected = undefined; item.country.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" theme="bootstrap">
+                                <ui-select-match placeholder="Choose role">
+                                    {% verbatim %}
+                                        {{ $select.selected.name }}
+                                    {% endverbatim %}
+                                </ui-select-match>
+                                <ui-select-choices repeat="roleItem in ctrl.roles">
+                                    {% verbatim %}
+                                        {{ roleItem.name}}
+                                    {% endverbatim %}
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span class="input-group-btn">
+                                <button type="button" ng-click="item.role.selected = undefined; item.country.selected = undefined; item.sector.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                               </button>
+                            </span>
+                        </div>
+
+                        <div ng-show="item.role.selected !== undefined" class="input-group margin-bottom-10">
+                            <ui-select allow-clear ng-model="item.country.selected" on-select="item.sector.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" theme="bootstrap">
+                                <ui-select-match placeholder="Choose Country">
+                                    {% verbatim %}
+                                        {{ $select.selected.displayName }}
+                                    {% endverbatim %}
+                                </ui-select-match>
+                                <ui-select-choices repeat="countryItem in ctrl.nodeCountries">
+                                    {% verbatim %}
+                                        {{ countryItem.displayName }}
+                                    {% endverbatim %}
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span class="input-group-btn">
+                                <button type="button" ng-click="item.country.selected = undefined; item.sector.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                               </button>
+                            </span>
+                        </div>
+                        <div ng-show="item.country.selected !== undefined && item.country.selected.sectors.length > 0" class="input-group margin-bottom-10">
+                            <ui-select allow-clear ng-model="item.sector.selected" on-select="ctrl.addRole(item)" theme="bootstrap">
+                                <ui-select-match placeholder="Choose Sector">
+                                    {% verbatim %}
+                                        {{ $select.selected }}
+                                    {% endverbatim %}
+                                </ui-select-match>
+                                <ui-select-choices repeat="sector in item.country.selected.sectors | bySelectedRolesForSector:item.role.selected:item.country.selected:ctrl.dhis_user.userCredentials.userRoles:ctrl.newRoles">
+                                    {% verbatim %}
+                                        {{ sector }}
+                                    {% endverbatim %}
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span class="input-group-btn">
+                                <button type="button" ng-click="item.sector.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                               </button>
+                            </span>
+                        </div>
+                        <div ng-show="item.country.selected !== undefined && item.country.selected.sectors.length === 0" >
+                            <span>{% trans "Sorry, no Sectors for this Country" %}</span>
+                        </div>
+                        <div>
+                            <span ng-show="item.show_error"> {% trans "* Sorry, this role doesn't exist in DHIS system" %}</span>
+                            <span ng-show="item.role_exist"> {% trans "* Role already assigned!" %}</span>
+                            <button ng-show="item.show_button" class="add_role_button btn-xs btn-success" ng-click="ctrl.newRole(item)"><span class="glyphicon glyphicon-plus"></span> {% trans "New Role" %}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-4">
+                <div class="box">
+                    <div class="center">
+                        <label><span>{% trans "Current Roles Assigned" %}</span></label>
+                    </div>
+                    <ul>
+                        <li ng-repeat="role in roles = ctrl.dhis_user.userCredentials.userRoles.concat(ctrl.newRoles)">
+                            {% verbatim %}
+                                {{ role.displayName }}
+                            {% endverbatim %}
+                            <i ng-click="ctrl.removeRole(role)" class="glyphicon glyphicon-remove"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="action-row">
+            <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userCredentials.userRoles.length === 0 && ctrl.newRoles.length === 0" ng-click="ctrl.goToStep(3)" >
+                <span>{% trans 'Assign Roles' %}</span>
+            </button>
+            <a data-toggle="modal" data-target="#myModal">{% trans 'Return to User List' %}</a>
+        </div>
+    </div>
+    <div ng-show="ctrl.activeStep === 3">
+        <div class="row">
+            <label class="section-label"><span>{% trans "Select User Groups" %}</span>:</label>
+            <div class="col-sm-5">
+                <div class="box-without-border">
+                    <div class="input-group margin-bottom-10">
+                        <ui-select allow-clear ng-model="ctrl.group.selected" on-select="ctrl.newGroups.push(ctrl.group.selected)" item.show_error=false;" theme="bootstrap">
+                            <ui-select-match placeholder="Choose user group">
+                                {% verbatim %}
+                                    {{ $select.selected.displayName }}
+                                {% endverbatim %}
+                            </ui-select-match>
+                            <ui-select-choices repeat="group in ctrl.userGroups | groupsByCountry:ctrl.nodeCountries:ctrl.dhis_user.userGroups:ctrl.newGroups">
+                                {% verbatim %}
+                                    {{ group.displayName}}
+                                {% endverbatim %}
+                            </ui-select-choices>
+                        </ui-select>
+
+                        <span class="input-group-btn">
+                            <button type="button" ng-click="ctrl.group.selected = undefined" class="btn btn-default">
+                                <span class="glyphicon glyphicon-remove"></span>
+                           </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-4">
+                <div class="box">
+                    <div class="center">
+                        <label><span>{% trans "Current Groups Assigned" %}</span></label>
+                    </div>
+                    <ul>
+                        <li ng-repeat="group in groups = ctrl.dhis_user.userGroups.concat(ctrl.newGroups)">
+                            {% verbatim %}
+                                {{ group.displayName }}
+                            {% endverbatim %}
+                            <i ng-click="ctrl.removeGroup(group)" class="glyphicon glyphicon-remove"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="action-row">
+            <button class="btn btn-primary" ng-disabled="ctrl.dhis_user.userGroups.length === 0 && ctrl.newGroups.length === 0" ng-click="ctrl.save()" >
+                <span>{% trans 'Assign Groups' %}</span>
+            </button>
+            <a data-toggle="modal" data-target="#myModal" >{% trans 'Return to User List' %}</a>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">{% trans "You will lose all unsaved changes" %}</h4>
+          </div>
+          <div class="modal-body">
+            <p>{% trans "Are you sure you want to leave this page!" %}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Stay on page" %}</button>
+            <a type="button" class="btn btn-primary" data-dismiss="modal" ui-sref="users.list">{% trans "Leave this Page" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

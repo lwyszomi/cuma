@@ -1,2 +1,78 @@
-angular.module('cumaApp', ['treeControl', 'datatables', 'datatables.bootstrap', 'ui.select']);
+var app = angular.module('cumaApp', ['treeControl', 'datatables', 'datatables.bootstrap',
+                                     'ui.select', 'ui.router', 'ui.bootstrap']);
 
+app.run(function($rootScope, LoadingOverlayService) {
+    var deregisterStateChangeStartHandler = $rootScope.$on('$stateChangeStart', function () {
+        LoadingOverlayService.start();
+    });
+
+    var deregisterStateChangeEndHandler = $rootScope.$on('$stateChangeSuccess', function () {
+        LoadingOverlayService.stop();
+    });
+
+    $rootScope.$on('$destroy', function () {
+        deregisterStateChangeStartHandler();
+        deregisterStateChangeEndHandler();
+    });
+});
+
+app.config(function($stateProvider, $urlRouterProvider) {
+
+    $urlRouterProvider.otherwise('/users/');
+
+    $stateProvider
+        .state('users', {
+            abstract: true,
+            controller: function($scope) {
+                $scope.filters = {
+                    searchFieldTmp: "",
+                    selectedCountriesTmp: [],
+                    selectedUserGroupsTmp: [],
+                    selectedUserRolesTmp: [],
+                    selectedStatusTmp: {"val": -1, "text": "All"}
+                };
+            },
+            url: '/users',
+            template: '<ui-view></ui-view>'
+        })
+            .state('users.list', {
+                url: '/',
+                resolve: {
+                    users: function($http, jsonUrls) {
+                        return $http.get(jsonUrls.users).then(function(response) {
+                            return response.data.users;
+                        });
+                    },
+                    countries: function($http, jsonUrls) {
+                        return $http.get(jsonUrls.countries).then(function(response) {
+                            return response.data.countries;
+                        });
+                    }
+                },
+                template: '<users-list users="$resolve.users" countries="$resolve.countries" filters="filters"></users-list>'
+            })
+            .state('users.profile', {
+                url: '/profile/{id}',
+                resolve: {
+                    userProfile: function($http, $stateParams, jsonUrls) {
+                        return $http.get(jsonUrls.userProfile, {params: {user_id: $stateParams.id}}).then(function(response) {
+                            return response.data;
+                        });
+                    }
+                },
+                template: '<user-profile data="$resolve.userProfile"></user-profile>'
+            })
+            .state('users.edit', {
+                url: '/edit/{id}/{step}',
+                resolve: {
+                    editData: function($http, $stateParams, jsonUrls) {
+                        return $http.get(jsonUrls.userEdit, {params: {user_id: $stateParams.id}}).then(function(response) {
+                            return response.data;
+                        });
+                    }
+                },
+                template: function($stateParams) {
+                    return '<user-edit step="' + $stateParams.step +'" data="$resolve.editData"></user-edit>'
+                }
+            })
+});

@@ -7,17 +7,25 @@
             <script src='{% static "jquery/dist/jquery.min.js" %}'></script>
             <script src='{% static "datatables/media/js/jquery.dataTables.min.js" %}'></script>
             <script src='{% static "angular/angular.min.js" %}'></script>
+            <script src='{% static "angular-ui-router/release/angular-ui-router.min.js" %}'></script>
             <script src='{% static "angular-datatables/dist/angular-datatables.min.js" %}'></script>
             <script src='{% static "angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js" %}'></script>
             <script src='{% static "bootstrap/dist/js/bootstrap.min.js" %}'></script>
             <script src='{% static "datatables/media/js/dataTables.bootstrap.min.js" %}'></script>
             <script src='{% static "angular-tree-control/angular-tree-control.js" %}'></script>
             <script src='{% static "angular-ui-select/dist/select.min.js" %}'></script>
+            <script src='{% static "is-loading/jquery.isloading.min.js" %}'></script>
+
+            <script src='{% static "angular-bootstrap/ui-bootstrap.min.js" %}'></script>
+            <script src='{% static "angular-bootstrap/ui-bootstrap-tpls.js" %}'></script>
+
             <script src="{% static 'users/js/app.js' %}"></script>
+            <script src="{% static 'users/js/services/LoadingOverlayService.js' %}"></script>
         {% endblock js %}
 
         {% block style %}
             <link rel='stylesheet' type='text/css' href='{% static "users/css/base.css"%}'/>
+            <link rel='stylesheet' type='text/css' href='{% static "users/css/spinner.css"%}'/>
             <link rel='stylesheet' type='text/css' href='{% static "bootstrap/dist/css/bootstrap.css" %}'/>
             <link rel='stylesheet' type='text/css' href='{% static "angular-tree-control/css/tree-control.css" %}'/>
             <link rel="stylesheet" type="text/css" href='{% static "datatables/media/css/dataTables.bootstrap.css" %}'/>

@@ -1,7 +1,21 @@
+from django.http.response import JsonResponse
 from django.urls import reverse
 
 from django.conf import settings
+from django.views.generic.base import View
+
 from users import queries
+
+
+class JsonView(View):
+
+    def get_context_data(self, **kwargs):
+        context_data = {}
+        context_data.update(**kwargs)
+        return context_data
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(data=self.get_context_data())
 
 
 def generate_user_view_format(users):
