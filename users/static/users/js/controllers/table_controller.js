@@ -16,6 +16,8 @@ angular.module('cumaApp').controller('tableController', function($scope, $filter
     vm.allUsers = usersConfig.users;
     vm.users = usersConfig.users;
     vm.countries = usersConfig.countries;
+
+
     vm.searchField = "";
     vm.selectedCountries = [];
     vm.selectedUserGroups = [];
@@ -185,7 +187,7 @@ angular.module('cumaApp').controller('tableController', function($scope, $filter
         link: function(scope, element) {
             angular.element(element.find('input')[0]).bind('click', function() {
                 var table = scope.$parent.table;
-                if (table.selectedCountriesTmp.length == 0) {
+                if (table.filters.selectedCountriesTmp.length == 0) {
                     table.redColor = true;
                 }
             });

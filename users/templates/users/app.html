@@ -1,0 +1,42 @@
+{% extends 'users/base_template.html' %}
+{% load static %}
+
+{% block js %}
+    {{ block.super }}
+
+    <script src='{% static "users/js/components/usersList.js" %}'></script>
+    <script src='{% static "users/js/components/userProfile.js" %}'></script>
+    <script src='{% static "users/js/components/userEdit.js" %}'></script>
+
+    <script src="{% static 'users/js/controllers/filters.js' %}"></script>
+    <script src="{% static 'users/js/controllers/table_controller.js' %}"></script>
+{% endblock %}
+
+{% block container %}
+
+    <script>
+        var app = angular.module('cumaApp');
+
+        app.constant('partialsUrl', {
+            usersList: '{% url "partials:users_list" %}',
+            userProfile: '{% url "partials:user_profile" %}',
+            userEdit: '{% url "partials:user_edit" %}'
+        });
+
+        app.constant('jsonUrls', {
+            users: '{% url "json:users" %}',
+            countries: '{% url "json:countries" %}',
+            userProfile: '{% url "json:user_profile" %}',
+            userEdit: '{% url "json:user_edit" %}'
+        });
+
+        angular.module('cumaApp').constant('editConfig', {
+            "roleUrl": "{% url 'get_role_by_name' %}",
+            "saveUrl": "{% url 'save_user' %}"
+        });
+    </script>
+
+    <div ng-app="cumaApp">
+        <ui-view></ui-view>
+    </div>
+{% endblock %}
