@@ -3,7 +3,7 @@ angular.module('cumaApp').component('userEdit', {
         data: '<',
         step: '<?'
     },
-    controller: function($scope, $http, editConfig) {
+    controller: function($scope, $http, $state, editConfig, LoadingOverlayService) {
         var vm = this;
         vm.treeOptions = {multiSelection: true};
         vm.dhis_user = vm.data.dhis_user;
@@ -164,10 +164,14 @@ angular.module('cumaApp').component('userEdit', {
             vm.dhis_user.userCredentials.userRoles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
             vm.dhis_user.userGroups = vm.dhis_user.userGroups.concat(vm.newGroups);
             vm.dhis_user.organisationUnits = vm.selectedNodes;
+
+            LoadingOverlayService.start();
             $http.post(vm.saveUrl, vm.dhis_user).then(
                 function(successCallback) {
-                    window.location = successCallback.data.redirect;
+                    LoadingOverlayService.stop();
+                    $state.go('users.profile', {id: vm.dhis_user.id});
                 }, function(errorCallback) {
+                    LoadingOverlayService.stop();
                 }
             )
         }
