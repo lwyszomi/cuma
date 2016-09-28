@@ -95,3 +95,12 @@ class DHIS2User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+
+class CometServerConfiguration(models.Model):
+    url = models.URLField()
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.url
