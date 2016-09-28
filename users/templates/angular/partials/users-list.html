@@ -1,0 +1,75 @@
+{% load i18n %}
+
+<div class="top10">
+    <div class="row" id="filters">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>{% trans "Search" %}</label>
+                <div class="input-group">
+                    <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Username"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" ng-click="table.searchFieldTmp = ''"><i
+                                    class="glyphicon glyphicon-remove"></i></button>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>{% trans "Country" %}</label>
+                <ui-select multiple ng-model="table.selectedCountriesTmp" ng-class="{red:table.redColor}" theme="bootstrap" sortable="true" close-on-select="false">
+                    <ui-select-match placeholder="Select Country">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
+                    <ui-select-choices repeat="country in table.countries | filter:$select.search">
+                        {% verbatim %}{{ country.displayName }}{% endverbatim %}
+                    </ui-select-choices>
+                </ui-select>
+                <span ng-class="{red:table.redColor}" ng-show="table.redColor">{% trans "You must choose country" %}</span>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>{% trans "User Group" %}</label>
+                <ui-select multiple ng-model="table.selectedUserGroupsTmp" input-text-click theme="bootstrap" sortable="true"
+                           close-on-select="false">
+                    <ui-select-match placeholder="Select user group">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
+                    <ui-select-choices repeat="group in table.userGroups | orderBy:'displayName'| filter:$select.search">
+                        {% verbatim %}{{ group.displayName }}{% endverbatim %}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>{% trans "User Role" %}</label>
+                <ui-select multiple ng-model="table.selectedUserRolesTmp" input-text-click theme="bootstrap" sortable="true"
+                           close-on-select="false">
+                    <ui-select-match placeholder="Select user role">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
+                    <ui-select-choices repeat="group in table.userRoles | orderBy:'displayName'| filter:$select.search">
+                        {% verbatim %}{{ group.displayName }}{% endverbatim %}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <div class="form-group">
+                <label>{% trans "Status" %}</label>
+                <ui-select ng-model="table.selectedStatusTmp" theme="bootstrap" sortable="true" close-on-select="true">
+                    <ui-select-match>{% verbatim %}{{ $select.selected.text }}{% endverbatim %}</ui-select-match>
+                    <ui-select-choices repeat="status in table.statuses">
+                        {% verbatim %}{{ status.text }}{% endverbatim %}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="col-sm-1 padding-top22">
+            <div class="row">
+                <button class="btn btn-primary margin-bottom5" ng-click=table.search()>{% trans "Search" %}</button>
+            </div>
+            <div class="row">
+                <span class="link-target" ng-click="table.clear()">{% trans "Clear all filters" %}</span>
+            </div>
+        </div>
+    </div>
+    <table datatable="" dt-instance="table.dtInstanceCallback" dt-options="table.dtOptions" dt-columns="table.dtColumnDefs" class="table table-striped">
+    </table>
+</div>

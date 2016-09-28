@@ -42,7 +42,7 @@ class LoginView(TemplateView):
             if user:
                 if user.is_active:
                     login(request, user)
-                    next = request.GET.get('next', reverse('users'))
+                    next = request.GET.get('next', reverse('home'))
                     return redirect(next)
                 else:
                     messages.error(request, 'User inactive.', 'danger')

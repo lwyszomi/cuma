@@ -7,17 +7,25 @@
             <script src='{% static "jquery/dist/jquery.min.js" %}'></script>
             <script src='{% static "datatables/media/js/jquery.dataTables.min.js" %}'></script>
             <script src='{% static "angular/angular.min.js" %}'></script>
+            <script src='{% static "angular-ui-router/release/angular-ui-router.min.js" %}'></script>
             <script src='{% static "angular-datatables/dist/angular-datatables.min.js" %}'></script>
             <script src='{% static "angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js" %}'></script>
             <script src='{% static "bootstrap/dist/js/bootstrap.min.js" %}'></script>
             <script src='{% static "datatables/media/js/dataTables.bootstrap.min.js" %}'></script>
             <script src='{% static "angular-tree-control/angular-tree-control.js" %}'></script>
             <script src='{% static "angular-ui-select/dist/select.min.js" %}'></script>
+            <script src='{% static "is-loading/jquery.isloading.min.js" %}'></script>
+
+            <script src='{% static "angular-bootstrap/ui-bootstrap.min.js" %}'></script>
+            <script src='{% static "angular-bootstrap/ui-bootstrap-tpls.js" %}'></script>
+
             <script src="{% static 'users/js/app.js' %}"></script>
+            <script src="{% static 'users/js/services/LoadingOverlayService.js' %}"></script>
         {% endblock js %}
 
         {% block style %}
             <link rel='stylesheet' type='text/css' href='{% static "users/css/base.css"%}'/>
+            <link rel='stylesheet' type='text/css' href='{% static "users/css/spinner.css"%}'/>
             <link rel='stylesheet' type='text/css' href='{% static "bootstrap/dist/css/bootstrap.css" %}'/>
             <link rel='stylesheet' type='text/css' href='{% static "angular-tree-control/css/tree-control.css" %}'/>
             <link rel="stylesheet" type="text/css" href='{% static "datatables/media/css/dataTables.bootstrap.css" %}'/>
@@ -28,21 +36,28 @@
         <meta charset="UTF-8">
         <title>User Management</title>
     </head>
-    <body>
+    <body ng-app="cumaApp">
         <div class="header-bar" id="header">
-            <span class="header-text" id="headerText"><a class="header-link" href="{{ dhis_url }}">COMET</a> | User Management</span>
+            <span class="header-left">
+                <ul>
+                    <li>
+                        <a id="comet-url" class="logo-banner">
+                        </a>
+                    </li>
+                    <li class="header-text">
+                        <a href="{% url 'home' %}" class="text-white">COMET | User Management</a>
+                    </li>
+                </ul>
+            </span>
             <ul class="right-nav pull-right">
                 {% if user.is_authenticated %}
-                    {% if user.is_staff %}
-                        <li class="pull-left"><a href="{% url 'admin:index' %}">Admin</a></li>
-                    {% endif %}
                     <li id="profileButton" class="dropdown">
                         <a id="profileLink" href="#" class="header-text-right" data-toggle="dropdown">
                             <i class="glyphicon glyphicon-user"></i> Profile
                         </a>
                         <ul class="dropdown-menu dropdown-menu-profile">
                             <li>
-                                <a href="{% url 'show_user' user.external_id %}">{% trans "Profile" %}</a>
+                                <a ui-sref="users.profile({id: '{{ user.external_id }}'})">{% trans "Profile" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
@@ -66,7 +81,6 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-
             {% endblock messages %}
             {% block container %}
             {% endblock container %}

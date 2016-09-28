@@ -1,7 +1,22 @@
+from django.http.response import JsonResponse
 from django.urls import reverse
 
 from django.conf import settings
+from django.views.generic.base import View
+
+from accounts.mixins import LoginRequiredMixin
 from users import queries
+
+
+class JsonView(View, LoginRequiredMixin):
+
+    def get_context_data(self, **kwargs):
+        context_data = {}
+        context_data.update(**kwargs)
+        return context_data
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(data=self.get_context_data())
 
 
 def generate_user_view_format(users):
@@ -22,8 +37,7 @@ def generate_user_view_format(users):
             displayName=u['displayName'],
             username=u['userCredentials']['username'],
             status='Inactive' if u['userCredentials']['disabled'] else "Active",
-            show_url=reverse('show_user', kwargs={'user_id': u['id']}),
-            edit_url=reverse('edit_user', kwargs={'user_id': u['id'], 'step': 1}),
+            change_status_url=reverse('change_status', kwargs={'user_id': u['id']}),
             countries=countries.values(),
             userGroups=u['userGroups'],
             roles=u['userCredentials']['userRoles']

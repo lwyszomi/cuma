@@ -1,86 +1,42 @@
-{% extends "users/base_template.html" %}
-{% load staticfiles %}
-{% load i18n %}
+{% extends 'users/base_template.html' %}
+{% load static %}
+
 {% block js %}
     {{ block.super }}
-    <script>
-        angular.module('cumaApp').constant('usersConfig', {
-            "users": {{ users|safe }},
-            "countries": {{ countries|safe }}
-        })
-    </script>
+
+    <script src='{% static "users/js/routes.js" %}'></script>
+
+    <script src='{% static "users/js/components/usersList.js" %}'></script>
+    <script src='{% static "users/js/components/userProfile.js" %}'></script>
+    <script src='{% static "users/js/components/userEdit.js" %}'></script>
+
     <script src="{% static 'users/js/controllers/filters.js' %}"></script>
-    <script src="{% static 'users/js/controllers/table_controller.js' %}"></script>
 {% endblock %}
 
 {% block container %}
-    <div class="top10" ng-app="cumaApp" ng-controller="tableController as table">
-        <div class="row" id="filters">
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label>{% trans "Search" %}</label>
-                    <div class="input-group">
-                        <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Username"/>
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" ng-click="table.searchFieldTmp = ''"><i
-                                    class="glyphicon glyphicon-remove"></i></button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="form-group">
-                    <label>{% trans "Country" %}</label>
-                    <ui-select multiple ng-model="table.selectedCountriesTmp" ng-class="{red:table.redColor}" theme="bootstrap" sortable="true" close-on-select="false">
-                        <ui-select-match placeholder="Select Country">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
-                        <ui-select-choices repeat="country in table.countries | filter:$select.search">
-                            {% verbatim %}{{ country.displayName }}{% endverbatim %}
-                        </ui-select-choices>
-                    </ui-select>
-                    <span ng-class="{red:table.redColor}" ng-show="table.redColor">{% trans "You must choose country" %}</span>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label>{% trans "User Group" %}</label>
-                    <ui-select multiple ng-model="table.selectedUserGroupsTmp" input-text-click theme="bootstrap" sortable="true"
-                               close-on-select="false">
-                        <ui-select-match placeholder="Select user group">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
-                        <ui-select-choices repeat="group in table.userGroups | orderBy:'displayName'| filter:$select.search">
-                            {% verbatim %}{{ group.displayName }}{% endverbatim %}
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="form-group">
-                    <label>{% trans "User Role" %}</label>
-                    <ui-select multiple ng-model="table.selectedUserRolesTmp" input-text-click theme="bootstrap" sortable="true"
-                               close-on-select="false">
-                        <ui-select-match placeholder="Select user role">{% verbatim %}{{ $item.displayName }}{% endverbatim %}</ui-select-match>
-                        <ui-select-choices repeat="group in table.userRoles | orderBy:'displayName'| filter:$select.search">
-                            {% verbatim %}{{ group.displayName }}{% endverbatim %}
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
-            <div class="col-sm-1">
-                <div class="form-group">
-                    <label>{% trans "Status" %}</label>
-                    <ui-select ng-model="table.selectedStatusTmp" theme="bootstrap" sortable="true" close-on-select="true">
-                        <ui-select-match>{% verbatim %}{{ $select.selected.text }}{% endverbatim %}</ui-select-match>
-                        <ui-select-choices repeat="status in table.statuses">
-                            {% verbatim %}{{ status.text }}{% endverbatim %}
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
-            <div class="col-sm-1 padding-top22">
-                <button class="btn btn-primary margin-bottom5" ng-click=table.search()>{% trans "Search" %}</button>
-                <span class="link-target" ng-click="table.clear()">{% trans "Clear all filters" %}</span>
-            </div>
-        </div>
-        <table datatable="" dt-instance="table.dtInstanceCallback" dt-options="table.dtOptions" dt-columns="table.dtColumnDefs" class="table table-striped">
-        </table>
+
+    <script>
+        var app = angular.module('cumaApp');
+
+        app.constant('partialsUrl', {
+            usersList: '{% url "partials:users_list" %}',
+            userProfile: '{% url "partials:user_profile" %}',
+            userEdit: '{% url "partials:user_edit" %}'
+        });
+
+        app.constant('jsonUrls', {
+            users: '{% url "json:users" %}',
+            countries: '{% url "json:countries" %}',
+            userProfile: '{% url "json:user_profile" %}',
+            userEdit: '{% url "json:user_edit" %}'
+        });
+
+        angular.module('cumaApp').constant('editConfig', {
+            "roleUrl": "{% url 'get_role_by_name' %}",
+            "saveUrl": "{% url 'save_user' %}"
+        });
+    </script>
+    <div>
+        <ui-view></ui-view>
     </div>
-{% endblock container %}
+{% endblock %}
