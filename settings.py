@@ -176,6 +176,14 @@ LANGUAGES = [
 ]
 
 
+DEFAULT_ROLES = [
+    'Aggregate Data Entry',
+    'Analytics',
+    'Pivot Table',
+    'Individual Data Entry'
+]
+
+
 try:
     from localsettings import *
 except ImportError:
