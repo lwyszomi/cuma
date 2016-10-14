@@ -10,7 +10,7 @@ from django.conf import settings
 import json
 
 from accounts.mixins import LoginRequiredMixin
-from accounts.models import DHIS2User
+from accounts.models import DHIS2User, CometServerConfiguration
 from dhis2.utils import get_client
 from users.models import RoleType
 from users.utils import generate_user_view_format, generate_hierarchy, JsonView
@@ -20,7 +20,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'users/index.html'
 
     def get_context_data(self, **kwargs):
-        kwargs.update(user=DHIS2User.objects.get_by_natural_key(self.request.user.username))
+        kwargs.update(
+            user=DHIS2User.objects.get_by_natural_key(self.request.user.username),
+            dhis2_url=CometServerConfiguration.objects.first().url
+        )
         return super(HomeView, self).get_context_data(**kwargs)
 
 
@@ -175,7 +178,7 @@ class SaveUserView(View):
         if response.status_code == 200:
             return JsonResponse({})
         else:
-            return JsonResponse(data={'error': 'Error'})
+            return JsonResponse(data=response.json(), status=400)
 
 
 class SaveLanguage(View):

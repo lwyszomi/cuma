@@ -41,8 +41,7 @@
             <span class="header-left">
                 <ul>
                     <li>
-                        <a id="comet-url" class="logo-banner">
-                        </a>
+                        <a href="{{ dhis2_url }}" id="comet-url" class="logo-banner"></a>
                     </li>
                     <li class="header-text">
                         <a href="{% url 'home' %}" class="text-white">COMET | User Management</a>
@@ -52,7 +51,7 @@
             <ul class="right-nav pull-right">
                 {% if user.is_authenticated %}
                     <li id="profileButton" class="dropdown">
-                        <a id="profileLink" href="#" class="header-text-right" data-toggle="dropdown">
+                        <a id="profileLink" href="" class="header-text-right" data-toggle="dropdown">
                             <i class="glyphicon glyphicon-user"></i> Profile
                         </a>
                         <ul class="dropdown-menu dropdown-menu-profile">

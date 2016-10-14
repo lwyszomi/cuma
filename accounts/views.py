@@ -8,6 +8,7 @@ from accounts.forms import DHISAuthForm
 
 from django.conf import settings
 
+from accounts.models import CometServerConfiguration
 from dhis2.auth import DHIS2AuthenticationException
 
 
@@ -21,6 +22,7 @@ class LoginView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs['form'] = kwargs.get('form') or DHISAuthForm()
+        kwargs['dhis2_url'] = CometServerConfiguration.objects.first().url
         return super(LoginView, self).get_context_data(**kwargs)
 
     def post(self, request, **kwargs):
@@ -57,8 +59,10 @@ class LoginView(TemplateView):
 def logout_view(request):
     if not request.user.username:
         return redirect('accounts:login')
+
     logout(request)
-    return redirect(settings.DHIS2_URL)
+    comet_configuration_server = CometServerConfiguration.objects.first()
+    return redirect(comet_configuration_server.url)
 
 
 def comet_entry_view(request):

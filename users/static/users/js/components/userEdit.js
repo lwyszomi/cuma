@@ -170,8 +170,9 @@ angular.module('cumaApp').component('userEdit', {
                 function(successCallback) {
                     LoadingOverlayService.stop();
                     $state.go('users.profile', {id: vm.dhis_user.id});
-                }, function(errorCallback) {
+                }, function() {
                     LoadingOverlayService.stop();
+                    alert("Unexpected problem");
                 }
             )
         }
