@@ -13,7 +13,7 @@ from accounts.mixins import LoginRequiredMixin
 from accounts.models import DHIS2User, CometServerConfiguration
 from dhis2.utils import get_client
 from users.models import RoleType
-from users.utils import generate_user_view_format, generate_hierarchy, JsonView
+from users.utils import generate_user_view_format, generate_hierarchy, JsonView, user_has_permissions_to_org_unit
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -31,13 +31,30 @@ class UsersJsonView(JsonView):
 
     def get_context_data(self, **kwargs):
         users = queries.get_users()
-        return super(UsersJsonView, self).get_context_data(users=generate_user_view_format(users))
+
+        allowed_users = []
+        current_user = queries.get_user(self.request.user.external_id)
+        for user in users:
+            if not any([
+                user_has_permissions_to_org_unit(current_user, org_unit)
+                for org_unit in user['organisationUnits']
+            ]):
+                continue
+            user['organisationUnits'] = filter(
+                lambda x: user_has_permissions_to_org_unit(current_user, x),
+                user['organisationUnits']
+            )
+            allowed_users.append(user)
+
+        return super(UsersJsonView, self).get_context_data(users=generate_user_view_format(allowed_users))
 
 
 class CountriesJsonView(JsonView):
 
     def get_context_data(self, **kwargs):
-        return super(CountriesJsonView, self).get_context_data(countries=generate_hierarchy())
+        return super(CountriesJsonView, self).get_context_data(
+            countries=generate_hierarchy(self.request.user.external_id)
+        )
 
 
 class UserProfileJsonView(JsonView):
@@ -47,6 +64,7 @@ class UserProfileJsonView(JsonView):
         if not user_id:
             raise Http404()
         user = queries.get_user(user_id)
+        current_user = queries.get_user(self.request.user.external_id)
         organizations = user['organisationUnits']
         org_dict = defaultdict(list)
         user_roles = user['userCredentials']['userRoles']
@@ -58,10 +76,13 @@ class UserProfileJsonView(JsonView):
                 country = org['ancestors'][settings.COUNTRY_LEVEL - 1]
 
             if country:
+                if not user_has_permissions_to_org_unit(current_user, country):
+                    continue
                 country_list.append(country)
                 org_dict[country['displayName']].append(org['displayName'])
-
             else:
+                if not user_has_permissions_to_org_unit(current_user, org):
+                    continue
                 country_list.append(org)
                 org_dict[org['displayName']] = []
 
@@ -120,7 +141,12 @@ class UserEditData(JsonView):
         user = queries.get_user(user_edit)
         organization_units = queries.get_organization_units()
         roles = queries.get_user_roles()
+        current_user = queries.get_user(self.request.user.external_id)
+
+        user_organisation_units = []
         for org in organization_units:
+            if not user_has_permissions_to_org_unit(current_user, org):
+                continue
             org['sectors'] = []
             sectors = []
             if 'code' not in org:
@@ -131,10 +157,11 @@ class UserEditData(JsonView):
                     if len(sector) == 2:
                         sectors.append(sector[1])
             org['sectors'] = list(set(sectors))
+            user_organisation_units.append(org)
         user_groups = queries.get_user_groups()
         kwargs['roleTypes'] = [{'name': x.name} for x in RoleType.objects.all().order_by('name')]
         kwargs['dhis_user'] = user
-        kwargs['organisationUnits'] = organization_units
+        kwargs['organisationUnits'] = user_organisation_units
         kwargs['countryLvl'] = settings.COUNTRY_LEVEL
         kwargs['userGroups'] = user_groups
         return super(UserEditData, self).get_context_data(**kwargs)

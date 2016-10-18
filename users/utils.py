@@ -19,6 +19,14 @@ class JsonView(View, LoginRequiredMixin):
         return JsonResponse(data=self.get_context_data())
 
 
+def user_has_permissions_to_org_unit(dhis2_user, org_unit):
+    organisation_units_id = [
+        organisationUnit['id']
+        for organisationUnit in dhis2_user['organisationUnits']
+    ]
+    return any([org_id in org_unit['path'] for org_id in organisation_units_id])
+
+
 def generate_user_view_format(users):
     view_format = []
     for u in users:
@@ -45,11 +53,18 @@ def generate_user_view_format(users):
     return view_format
 
 
-def generate_hierarchy():
+def generate_hierarchy(user_id):
+    user = queries.get_user(user_id)
+
     countries = queries.get_countries()
     groups = queries.get_user_groups()
     roles = queries.get_user_roles()
+
+    user_countries = []
     for country in countries:
+        if not user_has_permissions_to_org_unit(user, country):
+            continue
+
         country['roles'] = []
         country['groups'] = []
         if 'code' not in country:
@@ -60,4 +75,5 @@ def generate_hierarchy():
         for group in groups:
             if country['code'] in group['displayName']:
                 country['groups'].append(group)
-    return countries
+        user_countries.append(country)
+    return user_countries
