@@ -88,6 +88,7 @@ class UserProfileJsonView(JsonView):
 
         roles = {}
         groups = {}
+        other_roles = []
         for country in country_list:
             r = []
             g = []
@@ -96,11 +97,16 @@ class UserProfileJsonView(JsonView):
             for role in user_roles:
                 if country['code'] in role['displayName']:
                     r.append(role['displayName'])
+                else:
+                    other_roles.append(role['displayName'])
             for group in user_groups:
                 if country['code'] in group['displayName']:
                     g.append(group['displayName'])
             roles[country['displayName']] = r
             groups[country['displayName']] = g
+
+        if other_roles:
+            roles['Other Roles'] = sorted(list(set(other_roles)))
 
         kwargs['dhis_user'] = user
 
@@ -153,9 +159,11 @@ class UserEditData(JsonView):
                 continue
             for role in roles:
                 if org['code'] in role['displayName']:
-                    sector = role['displayName'].split("%s- " % org['code'])
+                    sector = role['displayName'].split('-', 1)
                     if len(sector) == 2:
-                        sectors.append(sector[1])
+                        split_first_part = sector[0].split(':')
+                        if len(split_first_part) == 2 and org['code'] in split_first_part[1]:
+                            sectors.append(sector[1])
             org['sectors'] = list(set(sectors))
             user_organisation_units.append(org)
         user_groups = queries.get_user_groups()
@@ -171,9 +179,17 @@ class GetRoleView(View):
 
     def get(self, request, *agrs, **kwargs):
         role_name = request.GET.get('role_name', '')
+        country_code = request.GET.get('country_code', '')
+        sector = request.GET.get('sector', '')
         role = ''
         if role_name:
-            role = queries.get_role_by_name(role_name)
+            role = queries.get_role_by_name(
+                {
+                    'role_name': role_name,
+                    'country_code': country_code,
+                    'sector': sector
+                }
+            )
         return JsonResponse(data={'role': role})
 
 

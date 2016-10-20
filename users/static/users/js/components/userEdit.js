@@ -19,6 +19,7 @@ angular.module('cumaApp').component('userEdit', {
         vm.activeStep = 1;
         vm.organisationsInChunks = [];
         vm.nodeCountries = [];
+        vm.countriesCode = [];
         vm.newRoles = [];
         vm.newGroups = [];
         vm.roles = vm.data.roleTypes;
@@ -40,11 +41,14 @@ angular.module('cumaApp').component('userEdit', {
                 var role = item.role.selected;
                 var country = item.country.selected;
                 var sector = item.sector.selected;
-                var role_name = role.name + ': ' + country.code + "- " + sector;
                 $http({
                     url: vm.roleUrl,
                     method: "GET",
-                    params: {"role_name": role_name}
+                    params: {
+                        "role_name": role.name,
+                        "country_code": country.code,
+                        "sector": sector
+                    }
                 }).then(function successCallback(response) {
                     if (response.data['role'].length > 0) {
                         role = response.data['role'][0];
@@ -127,6 +131,20 @@ angular.module('cumaApp').component('userEdit', {
                 })
             });
             vm.nodeCountries = countries;
+            vm.countriesCode = countries.map(function(c) { return c.code; });
+        };
+
+        vm.roleInCountry = function(role) {
+            if (!role) {
+                return;
+            }
+            for (var i = 0; i < vm.countriesCode.length; i++) {
+                var code = vm.countriesCode[i];
+                if (role.displayName.indexOf(code) !== -1) {
+                    return true;
+                }
+            }
+            return false;
         };
 
         vm.getSelectedNodes = function() {

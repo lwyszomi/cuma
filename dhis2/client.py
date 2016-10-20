@@ -98,11 +98,11 @@ class DHIS2Client(object):
         })
         return groups.json()['userRoles']
 
-    def get_role_by_name(self, role_name):
+    def get_role_by_name(self, filters):
         session = self.session
         groups = session.get(self.url + 'userRoles.json', params={
             'fields': 'displayName,id',
-            'filter': 'displayName:eq:%s' % role_name,
+            'filter': ['displayName:like:%s' % f for f in filters.values()],
             'paging': 'false'
         })
         return groups.json()['userRoles']
