@@ -126,7 +126,7 @@
                             {% verbatim %}
                                 {{ role.displayName }}
                             {% endverbatim %}
-                            <i ng-click="ctrl.removeRole(role)" class="glyphicon glyphicon-remove"></i>
+                            <i ng-show="ctrl.roleInCountry(role)" ng-click="ctrl.removeRole(role)" class="glyphicon glyphicon-remove"></i>
                         </li>
                     </ul>
                 </div>

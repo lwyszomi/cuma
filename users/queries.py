@@ -31,9 +31,9 @@ def get_user_roles():
     return dhis_client.get_user_roles()
 
 
-def get_role_by_name(role_name):
+def get_role_by_name(params):
     dhis_client = get_client()
-    return dhis_client.get_role_by_name(role_name)
+    return dhis_client.get_role_by_name(params)
 
 
 def save_user(user):
