@@ -12,8 +12,8 @@
     </div>
     <div class="bread-crumb clearfix">
         <div><span ng-class="{complete:ctrl.selectedNodes.length > 0, active: ctrl.activeStep === 1}" ng-click="ctrl.goToStep(1)"><i class="fa fa-check" ></i> 1. <span >Select Organization Units</span></span></div>
-        <div><span ng-class="{complete:ctrl.activeStep > 1 || (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 2}" ng-click="ctrl.goToStep(2)"><i class="fa fa-check" ></i> 2. <span >Assign IRC Roles</span></span></div>
-        <div><span ng-class="{complete:ctrl.activeStep > 2 || (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0), active: ctrl.activeStep === 3}" ng-click="ctrl.goToStep(3)"><i class="fa fa-check" ng-click="ctrl.goToStep(3)"></i> 3. <span >Assign User Groups</span></span></div>
+        <div><span ng-class="{complete:ctrl.activeStep > 1 || (ctrl.selectedNodes.length > 0 && (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0)), active: ctrl.activeStep === 2}" ng-click="ctrl.goToStep(2)"><i class="fa fa-check" ></i> 2. <span >Assign IRC Roles</span></span></div>
+        <div><span ng-class="{complete:ctrl.activeStep > 2 || (ctrl.selectedNodes.length > 0 && (ctrl.dhis_user.userCredentials.userRoles.length > 0 || ctrl.newRoles.length > 0) && (ctrl.dhis_user.userGroups.length > 0 || ctrl.newGroups.length > 0)), active: ctrl.activeStep === 3}" ng-click="ctrl.goToStep(3)"><i class="fa fa-check" ng-click="ctrl.goToStep(3)"></i> 3. <span >Assign User Groups</span></span></div>
     </div>
 
     <div ng-show="ctrl.activeStep === 1">

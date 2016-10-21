@@ -172,6 +172,15 @@ angular.module('cumaApp').component('userEdit', {
         });
 
         vm.goToStep = function goToStep(step) {
+            var groups = vm.dhis_user.userGroups.concat(vm.newGroups);
+            var roles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
+            var ou = vm.selectedNodes;
+            if (roles.length === 0) {
+                step = 2;
+            }
+            if (ou.length === 0) {
+                step = 1
+            }
             vm.getCountries();
             vm.activeStep = step;
         };
