@@ -1,3 +1,5 @@
+import re
+
 from django.http import JsonResponse
 from django.http.response import Http404, HttpResponse
 from django.urls.base import reverse
@@ -89,6 +91,7 @@ class UserProfileJsonView(JsonView):
         roles = {}
         groups = {}
         other_roles = []
+        regex = re.compile('.*:.*-.*')
         for country in country_list:
             r = []
             g = []
@@ -97,7 +100,7 @@ class UserProfileJsonView(JsonView):
             for role in user_roles:
                 if country['code'] in role['displayName']:
                     r.append(role['displayName'])
-                else:
+                elif not regex.match(role['displayName']):
                     other_roles.append(role['displayName'])
             for group in user_groups:
                 if country['code'] in group['displayName']:
