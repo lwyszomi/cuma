@@ -1,0 +1,22 @@
+0. env.sh SET PROPERTIES STEP
+
+0a. For installation from scratch. Set up DHIS2 instance URL and DHIS2 superuser credentials in env.sh (DHIS2_URL, DHIS2_SUPERUSER_USERNAME,DHIS2_SUPERUSER_PASSWORD)
+Set proper paths to private keys with access to Github repositories (CUMA_PRIVATE_KEY)
+Proper URLS for SSC and CUMA are already set (CUMA_GITHUB_URL)
+
+0b. For cuma_update.sh. Please be sure to set both paths to actual application and Virtualenv path for CUMA application (CUMA_APP_PATH and CUMA_VENV_PATH)
+As this is an update, assumption is that 'cuma' unix user exists and has ssh key all set (access to Github repo as well).
+
+
+BOTH APP INSTALLATION STEPS:
+0. Follow 0a steps
+1. run cuma_install.sh to install CUMA:
+	You will be asked about password settings for CUMA 'admin' user. Note it and share with CUMA administrator
+2. Profit.
+	CUMA should be available at <root>/cuma
+
+
+CUMA UPDATE STEPS:
+0. Follow 0b points
+1. run cuma_update.sh
+2. Profit
