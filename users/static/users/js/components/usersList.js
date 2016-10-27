@@ -216,4 +216,17 @@ angular.module('cumaApp').component('usersList', {
     templateUrl: function(partialsUrl) {
         return partialsUrl.usersList;
     }
+}).directive('inputTextClick', function() {
+    return {
+        restrict: 'A',
+        scope: true,
+        link: function(scope, element) {
+            angular.element(element.find('input')[0]).bind('click', function() {
+                var table = scope.$parent.table;
+                if (table.selectedCountriesTmp.length == 0) {
+                    table.redColor = true;
+                }
+            });
+        }
+    };
 });
