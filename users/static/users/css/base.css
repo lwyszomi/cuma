@@ -20,6 +20,12 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, 
     display: initial !important;
 }
 
+.ui-select-bootstrap .ui-select-match-text span {
+    width: 350px !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 table.table thead .sorting_asc:before {
     display: none !important;
 }
