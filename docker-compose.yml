@@ -1,0 +1,35 @@
+version: '2'
+services:
+ dhis:
+  build: dhis2-docker
+  environment:
+    JAVA_OPTS: "-Xmx1024m -Xms4000m"
+    POSTGRES_DB: dhis
+  entrypoint: ./wait-for-it.sh -t 0 db:5432 --
+  command: catalina.sh run
+  ports:
+    - "8080:8080"
+  depends_on:
+    - db
+ db:
+   image: postgres:9.3
+   environment:
+    - POSTGRES_DB=cuma
+    - POSTGRES_USER=cuma
+    - POSTGRES_PASSWORD=cuma
+   volumes:
+     - ./postgresql:/var/lib/postgresql/data
+     - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+ web:
+   build: .
+   entrypoint: ./wait-for-it.sh -t 0 db:5432 --
+   command: python manage.py runserver 0.0.0.0:8000
+   environment:
+     - DJANGO_SETTINGS_MODULE=docker.docker_settings
+   volumes:
+     - .:/code
+   ports:
+     - "8000:8000"
+   depends_on:
+     - dhis
+     - db
