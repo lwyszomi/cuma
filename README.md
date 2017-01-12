@@ -1,6 +1,31 @@
 # cuma
 
-Installing
+Initial setup (Docker)
+-------------
+* Linux
+   * Install [Docker](https://docs.docker.com/engine/installation/)
+   * Install [Docker Compose](https://docs.docker.com/compose/install/) (Note you can also install in a virtualenv with `$ pip install docker-compose`)
+
+### Configuring App
+    docker-compose build
+    docker-compose run web python manage.py migrate
+
+### Run application
+    docker-compose up -d
+
+### Configure CUMA
+    Go to http://localhost:8080/ (It may take a while to load page for the first time). Sign in using login: admin, password: district
+    Go to http://localhost:8080/dhis-web-maintenance-user/showAddUserForm.action
+    Create new superuser in dhis2.
+    docker-compose run web python manage.py create_or_update_config http://dhis:8080/ username password (Use username and password from user that you've created in previous step)
+
+### Load fixtures (optional)
+    Go to http://localhost:8080/dhis-web-importexport/dxf2MetaDataImport.action
+    Choose dhis2-docker/fixtures/metadata.xml, change format to xml and then hit import button
+    Repeat same process for dhis2-docker/fixtures/userRoleMetadata.xml (Order is important here)
+    
+
+Installing (Without Docker)
 ----------------------
 
 ### Installing dependencies

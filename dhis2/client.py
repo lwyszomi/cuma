@@ -46,7 +46,7 @@ class DHIS2Client(object):
         session = self.session
         fields = [
             ':all',
-            'userCredentials[disabled,username,userRoles[displayName,id]]',
+            'userCredentials[id,disabled,username,userRoles[displayName,id]]',
             'organisationUnits[displayName,path,level,code,id,ancestors[displayName,path,level,code,id]]',
             'userGroups[id,displayName]',
         ]
@@ -147,7 +147,7 @@ class DHIS2Client(object):
             'id',
             'firstName',
             'surname',
-            'userCredentials[username,userRoles[id]]',
+            'userCredentials[id,username,userRoles[id]]',
             'href'
         ]
         response = session.get(self.url + 'users.json', params={
