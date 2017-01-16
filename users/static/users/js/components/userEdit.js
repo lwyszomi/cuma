@@ -191,6 +191,7 @@ angular.module('cumaApp').component('userEdit', {
             vm.dhis_user.userCredentials.userRoles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
             vm.dhis_user.userGroups = vm.dhis_user.userGroups.concat(vm.newGroups);
             vm.dhis_user.organisationUnits = vm.selectedNodes;
+            vm.dhis_user.dataViewOrganisationUnits = vm.selectedNodes;
 
             LoadingOverlayService.start();
             $http.post(vm.saveUrl, vm.dhis_user).then(
