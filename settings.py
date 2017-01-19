@@ -133,6 +133,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'bower_components')]
 
 DHIS2_API_URL = ''
+DHIS2_API_VERSION = '25'
 DHIS2_USERNAME = ''
 DHIS2_PASSWORD = ''
 

@@ -9,7 +9,11 @@ from requests.exceptions import HTTPError
 class DHIS2Client(object):
 
     def __init__(self, url, username, password):
-        self.url = url
+        from dhis2.utils import join_path_to_url
+
+        self.url = join_path_to_url(url, settings.DHIS2_API_VERSION + '/')
+        print self.url
+        self.url_without_version = url
         self.username = username
         self.password = password
 
@@ -20,9 +24,10 @@ class DHIS2Client(object):
         return session
 
     def get_user_profile(self, username, password):
-        response = requests.get(self.url + 'me.json', params={
+        response = requests.get(self.url_without_version + 'me.json', params={
             'fields': 'id,firstName,surname,email,userCredentials[username]'
         }, auth=(username, password))
+        print(response.text)
         if response.status_code != 200:
             raise HTTPError(response=response)
         return response.json()
