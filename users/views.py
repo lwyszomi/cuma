@@ -37,6 +37,10 @@ class UsersJsonView(JsonView):
         allowed_users = []
         current_user = queries.get_user(self.request.user.external_id)
         for user in users:
+            if not user['organisationUnits']:
+                allowed_users.append(user)
+                continue
+
             if not any([
                 user_has_permissions_to_org_unit(current_user, org_unit)
                 for org_unit in user['organisationUnits']
@@ -57,6 +61,17 @@ class CountriesJsonView(JsonView):
         return super(CountriesJsonView, self).get_context_data(
             countries=generate_hierarchy(self.request.user.external_id)
         )
+
+
+class LanguagesJsonView(JsonView):
+
+    def get_context_data(self, **kwargs):
+        return {
+            'languages': [
+                {'code': code, 'name': name}
+                for code, name in settings.LANGUAGES
+            ]
+        }
 
 
 class UserProfileJsonView(JsonView):
@@ -178,6 +193,24 @@ class UserEditData(JsonView):
         return super(UserEditData, self).get_context_data(**kwargs)
 
 
+class LDAPUsersView(JsonView):
+
+    def get_context_data(self, **kwargs):
+        return {
+            'users': queries.get_ldap_users()
+        }
+
+
+class LDAPUserView(JsonView):
+
+    def get_context_data(self, **kwargs):
+        email = self.request.GET.get('email')
+        if not email:
+            return {}
+
+        return queries.get_ldap_user(email)
+
+
 class GetRoleView(View):
 
     def get(self, request, *agrs, **kwargs):
@@ -220,9 +253,13 @@ class SaveUserView(View):
 
     def post(self, request, *agrs, **kwargs):
         user = json.loads(request.body)
-        response = queries.save_user(user)
+        if user.get('id'):
+            response = queries.save_user(user)
+        else:
+            response = queries.create_user(user)
+
         if response.status_code == 200:
-            return JsonResponse({})
+            return JsonResponse(user)
         else:
             return JsonResponse(data=response.json(), status=400)
 

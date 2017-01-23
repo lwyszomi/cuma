@@ -2,7 +2,8 @@ from django.conf.urls import url, include
 from django.views.generic.base import TemplateView
 
 from users.views import GetRoleView, SaveUserView, SaveLanguage, \
-    UsersJsonView, CountriesJsonView, UserProfileJsonView, UserEditData, ChangeUserStatusView, HomeView
+    UsersJsonView, CountriesJsonView, UserProfileJsonView, UserEditData, ChangeUserStatusView, HomeView, \
+    LDAPUsersView, LDAPUserView, LanguagesJsonView
 
 partial_patterns = [
     url(r'^users-list.html$', TemplateView.as_view(template_name='angular/partials/users-list.html'),
@@ -11,13 +12,20 @@ partial_patterns = [
         name='user_profile'),
     url(r'^user-edit.html$', TemplateView.as_view(template_name='angular/partials/user-edit.html'),
         name='user_edit'),
+    url(r'^ldap-users.html$', TemplateView.as_view(template_name='angular/partials/ldap-users.html'),
+        name='ldap_users'),
+    url(r'^ldap-user-edit.html$', TemplateView.as_view(template_name='angular/partials/ldap-user-edit.html'),
+        name='ldap_user_edit'),
 ]
 
 json_patterns = [
     url(r'^users', UsersJsonView.as_view(), name='users'),
     url(r'^countries', CountriesJsonView.as_view(), name='countries'),
     url(r'^user_profile', UserProfileJsonView.as_view(), name='user_profile'),
-    url(r'^user_edit', UserEditData.as_view(), name='user_edit')
+    url(r'^user_edit', UserEditData.as_view(), name='user_edit'),
+    url(r'^ldap_users', LDAPUsersView.as_view(), name='ldap_users'),
+    url(r'^ldap_user', LDAPUserView.as_view(), name='ldap_user'),
+    url(r'^languages', LanguagesJsonView.as_view(), name='languages'),
 ]
 
 urlpatterns = [

@@ -57,4 +57,41 @@ angular.module('cumaApp').config(function($stateProvider, $urlRouterProvider) {
                 return '<user-edit step="' + $stateParams.step +'" data="$resolve.editData"></user-edit>'
             }
         })
+        .state('users.ldap', {
+            abstract: true,
+            url: '/ldap',
+            template: '<ui-view></ui-view>'
+        })
+        .state('users.ldap.choice', {
+            url: '/',
+            resolve: {
+                users: function($q, $http, jsonUrls, ldapUsersService) {
+                    return $q.all([ldapUsersService.getUsers(), $http.get(jsonUrls.users)]).then(function(response) {
+                        var ldapUsers = response[0];
+                        var dhisUsers = response[1].data.users;
+
+                        var usernamesTaken = dhisUsers.map(function(u) {
+                            return u.username;
+                        });
+
+                        return ldapUsers.filter(function(ldapUser) {
+                            return usernamesTaken.indexOf(ldapUser.mail) === -1;
+                        });
+                    });
+                }
+            },
+            template: '<ldap-users-list users="$resolve.users"></ldap-users-list>'
+        })
+        .state('users.ldap.edit', {
+            url: '/{email}',
+            resolve: {
+                user: function(ldapUsersService, $stateParams) {
+                    return ldapUsersService.getUser($stateParams.email);
+                },
+                languages: function(languagesService) {
+                    return languagesService.getLanguages();
+                }
+            },
+            template: '<ldap-user-edit user="$resolve.user" languages="$resolve.languages"></ldap-user-edit>'
+        });
 });

@@ -4,11 +4,16 @@
 {% block js %}
     {{ block.super }}
 
+    <script src="{% static "users/js/services/ldapUsersService.js" %}"></script>
+    <script src="{% static "users/js/services/languagesService.js" %}"></script>
+
     <script src='{% static "users/js/routes.js" %}'></script>
 
     <script src='{% static "users/js/components/usersList.js" %}'></script>
     <script src='{% static "users/js/components/userProfile.js" %}'></script>
     <script src='{% static "users/js/components/userEdit.js" %}'></script>
+    <script src='{% static "users/js/components/ldapUsersList.js" %}'></script>
+    <script src='{% static "users/js/components/ldapUserEdit.js" %}'></script>
 
     <script src="{% static 'users/js/controllers/filters.js' %}"></script>
 {% endblock %}
@@ -21,19 +26,24 @@
         app.constant('partialsUrl', {
             usersList: '{% url "partials:users_list" %}',
             userProfile: '{% url "partials:user_profile" %}',
-            userEdit: '{% url "partials:user_edit" %}'
+            userEdit: '{% url "partials:user_edit" %}',
+            ldapUsers: '{% url "partials:ldap_users" %}',
+            ldapUserEdit: '{% url "partials:ldap_user_edit" %}'
         });
 
         app.constant('jsonUrls', {
             users: '{% url "json:users" %}',
             countries: '{% url "json:countries" %}',
             userProfile: '{% url "json:user_profile" %}',
-            userEdit: '{% url "json:user_edit" %}'
+            userEdit: '{% url "json:user_edit" %}',
+            ldapUsers: '{% url "json:ldap_users" %}',
+            ldapUser: '{% url "json:ldap_user" %}',
+            languages: '{% url "json:languages" %}'
         });
 
         angular.module('cumaApp').constant('editConfig', {
-            "roleUrl": "{% url 'get_role_by_name' %}",
-            "saveUrl": "{% url 'save_user' %}"
+            roleUrl: "{% url 'get_role_by_name' %}",
+            saveUrl: "{% url 'save_user' %}"
         });
     </script>
     <div>

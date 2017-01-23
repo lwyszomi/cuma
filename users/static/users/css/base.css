@@ -1079,3 +1079,8 @@ table .tablesort-sortable:hover::after, table .tablesort-asc::after, table .tabl
 .header-bar li {
     padding-right: 10px;
 }
+
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+}

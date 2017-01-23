@@ -133,6 +133,12 @@ class DHIS2Client(object):
         save = session.put(user['href'], data=json.dumps(user), headers=headers)
         return save
 
+    def create_user(self, user):
+        session = self.session
+        headers = {'content-type': 'application/json'}
+        save = session.post(self.url + 'users', data=json.dumps(user), headers=headers)
+        return save
+
     def get_dashboard_role(self):
         session = self.session
         groups = session.get(self.url + 'userRoles.json', params={
@@ -157,3 +163,8 @@ class DHIS2Client(object):
             'paging': 'false'
         })
         return response.json()['users']
+
+    def get_system_id(self):
+        response = self.session.get(self.url + 'system/id.json')
+        response.raise_for_status()
+        return response.json()['codes'][0]
