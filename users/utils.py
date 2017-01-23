@@ -5,7 +5,6 @@ from django.conf import settings
 from django.views.generic.base import View
 
 from accounts.mixins import LoginRequiredMixin
-from users import queries
 
 
 class JsonView(View, LoginRequiredMixin):
@@ -54,6 +53,8 @@ def generate_user_view_format(users):
 
 
 def generate_hierarchy(user_id):
+    from users import queries
+
     user = queries.get_user(user_id)
 
     countries = queries.get_countries()
@@ -77,3 +78,8 @@ def generate_hierarchy(user_id):
                 country['groups'].append(group)
         user_countries.append(country)
     return user_countries
+
+
+def get_default_ldap_client():
+    from ldap_integration.client import LDAPClient
+    return LDAPClient(settings.LDAP_SERVER, settings.BASE_DN, settings.LDAP_USER, settings.LDAP_PASSWORD)

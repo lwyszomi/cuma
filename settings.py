@@ -183,6 +183,10 @@ DEFAULT_ROLES = [
     'Individual Data Entry'
 ]
 
+LDAP_SERVER = ''
+BASE_DN = ''
+LDAP_USER = ''
+LDAP_PASSWORD = ''
 
 try:
     from localsettings import *

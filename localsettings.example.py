@@ -16,3 +16,8 @@ DHIS2_USERNAME = 'admin'
 DHIS2_PASSWORD = 'district'
 
 COUNTRY_LEVEL = 3
+
+LDAP_SERVER = ''
+BASE_DN = ''
+LDAP_USER = ''
+LDAP_PASSWORD = ''
