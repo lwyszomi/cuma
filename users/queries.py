@@ -72,7 +72,7 @@ def get_users_without_role(role_id):
 
 def get_ldap_users():
     ldap_client = get_default_ldap_client()
-    return ldap_client.run_query('(&(objectClass=user)(mail=*))', ['mail', 'cn', 'sn', 'givenName'])
+    return ldap_client.run_query('(&(objectClass=user)(mail=*))', ['mail', 'cn', 'sn', 'givenName', 'title', 'co'])
 
 
 def get_ldap_user(email):

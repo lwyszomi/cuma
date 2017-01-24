@@ -13,6 +13,7 @@ import json
 
 from accounts.mixins import LoginRequiredMixin
 from accounts.models import DHIS2User, CometServerConfiguration
+from dhis2.error_codes import ErrorCodes, ERROR_CODES
 from dhis2.utils import get_client
 from users.models import RoleType
 from users.utils import generate_user_view_format, generate_hierarchy, JsonView, user_has_permissions_to_org_unit
@@ -259,6 +260,16 @@ class SaveUserView(View):
             response = queries.create_user(user)
 
         if response.status_code == 200:
+            response_json = response.json()
+            status = response_json.get('status')
+            if status == 'ERROR':
+                errors = set()
+                for type_report in response_json['typeReports']:
+                    object_report = type_report['objectReports'][0]
+                    for error_report in object_report['errorReports']:
+                        error_code = error_report.get('errorCode')
+                        errors.add(ERROR_CODES.get(error_code, 'Unexpected error'))
+                return JsonResponse({'errors': list(errors)}, status=400)
             return JsonResponse(user)
         else:
             return JsonResponse(data=response.json(), status=400)
