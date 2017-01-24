@@ -35,7 +35,7 @@ angular.module('cumaApp').component('ldapUserEdit', {
                     LoadingOverlayService.stop();
                     alert("Unexpected problem");
                 }
-            )
+            );
         };
     }
 });

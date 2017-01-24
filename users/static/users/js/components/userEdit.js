@@ -148,6 +148,10 @@ angular.module('cumaApp').component('userEdit', {
         };
 
         vm.getSelectedNodes = function() {
+            if (!vm.dhis_user.organisationUnits) {
+                return [];
+            }
+
             var nodes = [];
             vm.organisationUnits.forEach(function(ou) {
                 vm.dhis_user.organisationUnits.forEach(function(orgs) {
@@ -172,7 +176,6 @@ angular.module('cumaApp').component('userEdit', {
         });
 
         vm.goToStep = function goToStep(step) {
-            var groups = vm.dhis_user.userGroups.concat(vm.newGroups);
             var roles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
             var ou = vm.selectedNodes;
             if (roles.length === 0) {
