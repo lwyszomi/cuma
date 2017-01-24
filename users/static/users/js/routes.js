@@ -66,18 +66,7 @@ angular.module('cumaApp').config(function($stateProvider, $urlRouterProvider) {
             url: '/',
             resolve: {
                 users: function($q, $http, jsonUrls, ldapUsersService) {
-                    return $q.all([ldapUsersService.getUsers(), $http.get(jsonUrls.users)]).then(function(response) {
-                        var ldapUsers = response[0];
-                        var dhisUsers = response[1].data.users;
-
-                        var usernamesTaken = dhisUsers.map(function(u) {
-                            return u.username;
-                        });
-
-                        return ldapUsers.filter(function(ldapUser) {
-                            return usernamesTaken.indexOf(ldapUser.mail) === -1;
-                        });
-                    });
+                    return ldapUsersService.getUsers();
                 }
             },
             template: '<ldap-users-list users="$resolve.users"></ldap-users-list>'
