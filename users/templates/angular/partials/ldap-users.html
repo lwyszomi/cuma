@@ -2,7 +2,7 @@
 <div>
     <div uib-alert ng-repeat="alert in $ctrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="$ctrl.closeAlert($index)">{{ alert.message }}</div>
     <div class="row" id="filters">
-        <div class="col-sm-2">
+        <div class="col-sm-4">
             <div class="form-group">
                 <label>Search Existing Users</label>
                 <div class="input-group">

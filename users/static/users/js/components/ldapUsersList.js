@@ -63,6 +63,12 @@ angular.module('cumaApp').component('ldapUsersList', {
             .setDOM('<li<t>p>')
             .setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': '&nbsp;&nbsp;of _TOTAL_ users'});
 
+        vm.$onInit = function() {
+            vm.users = vm.users.filter(function(u) {
+                return u.givenName && u.sn;
+            });
+        };
+
         vm.search = function() {
             vm.dtInstance.reloadData();
         };
