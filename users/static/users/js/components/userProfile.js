@@ -24,6 +24,10 @@ angular.module('cumaApp').component('userProfile', {
 
                     vm.loading = false;
 
+                    vm.close = function() {
+                        $uibModalInstance.dismiss();
+                    };
+
                     vm.save = function() {
                         vm.loading = true;
                         $http.post(saveLanguageUrl, {language_code: vm.selectedLanguage}).then(function() {
@@ -53,7 +57,6 @@ angular.module('cumaApp').component('userProfile', {
             });
 
             modalInstance.result.then(function(selectedLanguage) {
-                debugger;
                 vm.data.user_language = selectedLanguage;
             });
         }
