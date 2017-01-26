@@ -153,7 +153,7 @@ angular.module('cumaApp').component('usersList', {
 
         init();
 
-        vm.clear = function() {
+        vm.clearSearch = function() {
             vm.searchFieldTmp = '';
             vm.search();
         };
