@@ -97,6 +97,7 @@ angular.module('cumaApp').component('ldapUsersList', {
                     $state.go('users.edit', {id: user.id, step: 1});
                 }, function(response) {
                     var errors = response.data.errors;
+                    vm.alerts = [];
                     errors.forEach(function(e) {
                         vm.addAlert(e, 'danger');
                     });
