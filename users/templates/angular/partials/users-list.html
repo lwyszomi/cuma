@@ -11,9 +11,11 @@
             <div class="form-group">
                 <label>{% trans "Search Existing Users" %}</label>
                 <div class="input-group">
-                    <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Username"/>
+                    <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp"
+                           ui-keypress="{13: 'table.search()'}"
+                           ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Username"/>
                         <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" ng-click="table.searchFieldTmp = ''"><i
+                            <button class="btn btn-secondary" type="button" ng-click="table.clear()"><i
                                     class="glyphicon glyphicon-remove"></i></button>
                         </span>
                 </div>

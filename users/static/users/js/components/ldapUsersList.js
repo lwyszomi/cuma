@@ -69,6 +69,11 @@ angular.module('cumaApp').component('ldapUsersList', {
             });
         };
 
+        vm.clear = function() {
+            vm.searchField = '';
+            vm.search();
+        };
+
         vm.search = function() {
             vm.dtInstance.reloadData();
         };
