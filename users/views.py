@@ -102,7 +102,9 @@ class UserProfileJsonView(JsonView):
                 if not user_has_permissions_to_org_unit(current_user, org):
                     continue
                 country_list.append(org)
-                org_dict[org['displayName']] = []
+
+                if org['displayName'] not in org_dict:
+                    org_dict[org['displayName']] = []
 
         roles = {}
         groups = {}
