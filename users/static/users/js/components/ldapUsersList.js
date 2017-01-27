@@ -6,7 +6,7 @@ angular.module('cumaApp').component('ldapUsersList', {
         users: '<'
     },
     controller: function($scope, $compile, $state, DTOptionsBuilder, DTDefaultOptions,
-                         DTColumnBuilder, $q, editConfig, LoadingOverlayService, $http) {
+                         DTColumnBuilder, $q, editConfig, LoadingOverlayService, $http, ldapUsersService) {
         var vm = this;
 
         vm.alerts = [];
@@ -36,7 +36,7 @@ angular.module('cumaApp').component('ldapUsersList', {
             .withDataProp('data')
             .withOption('processing', true)
             .withOption('createdRow', createdRow)
-            .withOption('paging', true);
+            .withOption('paging', false);
 
         vm.dtColumnDefs = [
             DTColumnBuilder.newColumn('mail').withTitle('Name').renderWith(function(data, type, full) {
@@ -61,12 +61,16 @@ angular.module('cumaApp').component('ldapUsersList', {
 
         DTDefaultOptions
             .setDOM('<li<t>p>')
-            .setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': '&nbsp;&nbsp;of _TOTAL_ users'});
+            .setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': ''});
+
+        var filterUsersWithoutName = function(users) {
+            return users.filter(function(u) {
+                return u.givenName && u.sn && u.mail;
+            });
+        };
 
         vm.$onInit = function() {
-            vm.users = vm.users.filter(function(u) {
-                return u.givenName && u.sn;
-            });
+            vm.users = filterUsersWithoutName(vm.users);
         };
 
         vm.clear = function() {
@@ -75,7 +79,13 @@ angular.module('cumaApp').component('ldapUsersList', {
         };
 
         vm.search = function() {
-            vm.dtInstance.reloadData();
+            LoadingOverlayService.start();
+            ldapUsersService.getUsers(vm.searchField).then(function(users) {
+                vm.users = filterUsersWithoutName(users);
+                vm.dtInstance.reloadData();
+            }).finally(function() {
+                LoadingOverlayService.stop();
+            });
         };
 
         vm.save = function(userEmail) {
@@ -114,17 +124,6 @@ angular.module('cumaApp').component('ldapUsersList', {
         function serverData() {
             var deferred = $q.defer();
             var users = vm.users;
-            var search = vm.searchField;
-            if (search) {
-                search = search.toLowerCase();
-                users = users.filter(function(user) {
-                    var sn = (user.sn || '').toLowerCase();
-                    var givenName = (user.givenName || '').toLowerCase();
-                    var mail = (user.mail || '').toLowerCase();
-
-                    return (givenName.indexOf(search) !== -1 || sn.indexOf(search) !== -1 || mail.indexOf(search) !== -1)
-                });
-            }
             deferred.resolve(users);
             return deferred.promise;
         }

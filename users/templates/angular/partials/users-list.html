@@ -13,7 +13,7 @@
                 <div class="input-group">
                     <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp"
                            ui-keypress="{13: 'table.search()'}"
-                           ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Username"/>
+                           placeholder="Name, Username"/>
                         <span class="input-group-btn">
                             <button class="btn btn-secondary" type="button" ng-click="table.clearSearch()"><i
                                     class="glyphicon glyphicon-remove"></i></button>

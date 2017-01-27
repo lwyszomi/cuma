@@ -199,8 +199,9 @@ class UserEditData(JsonView):
 class LDAPUsersView(JsonView):
 
     def get_context_data(self, **kwargs):
+        search = self.request.GET.get('search', '')
         return {
-            'users': queries.get_ldap_users()
+            'users': queries.get_ldap_users(search)
         }
 
 

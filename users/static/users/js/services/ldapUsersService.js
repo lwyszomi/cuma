@@ -1,7 +1,13 @@
 angular.module('cumaApp').factory('ldapUsersService', function($http, jsonUrls) {
     return {
-        getUsers: function() {
-            return $http.get(jsonUrls.ldapUsers).then(function(response) {
+        getUsers: function(searchFilter) {
+            var params = {};
+            if (searchFilter) {
+                params.search = searchFilter
+            }
+            return $http.get(jsonUrls.ldapUsers, {
+                params: params
+            }).then(function(response) {
                 return response.data.users;
             });
         },

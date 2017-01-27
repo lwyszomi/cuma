@@ -70,9 +70,13 @@ def get_users_without_role(role_id):
     return dhis_client.get_users_without_role(role_id)
 
 
-def get_ldap_users():
+def get_ldap_users(search=''):
     ldap_client = get_default_ldap_client()
-    return ldap_client.run_query('(&(objectClass=user)(mail=*))', ['mail', 'cn', 'sn', 'givenName', 'title', 'co'])
+    if not search:
+        query = 'objectClass=user'
+    else:
+        query = '(|(mail={0})(sn={0})(givenName={0})(name={0}))'.format(search)
+    return ldap_client.run_query(query, ['mail', 'cn', 'sn', 'givenName', 'name', 'title', 'co'])
 
 
 def get_ldap_user(email):
