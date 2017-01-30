@@ -75,7 +75,7 @@ def get_ldap_users(search=''):
     if not search:
         query = 'objectClass=user'
     else:
-        query = '(|(mail={0})(sn={0})(givenName={0})(name={0}))'.format(search)
+        query = '(|(mail={0}*)(sn={0}*)(givenName={0}*)(name={0}*))'.format(search)
     return ldap_client.run_query(query, ['mail', 'cn', 'sn', 'givenName', 'name', 'title', 'co'])
 
 
