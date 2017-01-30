@@ -45,14 +45,14 @@ angular.module('cumaApp').component('userEdit', {
         };
 
         var isRoleAlreadySelected = function(roleId) {
-            return getExistingRolesId().indexOf(roleId) === -1;
+            return getExistingRolesId().indexOf(roleId) !== -1;
         };
 
         var roleHandler = function(role, item) {
             if (role.length > 0) {
                 role = role[0];
                 item.show_error = false;
-                if (isRoleAlreadySelected(role.id)) {
+                if (!isRoleAlreadySelected(role.id)) {
                     vm.newRoles.push(role);
                     item.role_exist = false;
                 } else {
