@@ -161,6 +161,14 @@ class UserProfileJsonView(JsonView):
 
 class UserEditData(JsonView):
 
+    def _parse_sector(self, org, display_name):
+        sector = display_name.split('-', 1)
+        if len(sector) == 2:
+            split_first_part = sector[0].split(':')
+            if len(split_first_part) == 2 and org['code'] in split_first_part[1]:
+                return sector[1]
+        return None
+
     def get_context_data(self, **kwargs):
         user_edit = self.request.GET.get('user_id')
         if not user_edit:
@@ -179,12 +187,11 @@ class UserEditData(JsonView):
             if 'code' not in org:
                 continue
             for role in roles:
-                if org['code'] in role['displayName']:
-                    sector = role['displayName'].split('-', 1)
-                    if len(sector) == 2:
-                        split_first_part = sector[0].split(':')
-                        if len(split_first_part) == 2 and org['code'] in split_first_part[1]:
-                            sectors.append(sector[1])
+                if org['code'] not in role['displayName']:
+                    continue
+                sector = self._parse_sector(org, role['displayName'])
+                if sector:
+                    sectors.append(sector)
             org['sectors'] = list(set(sectors))
             user_organisation_units.append(org)
         user_groups = queries.get_user_groups()
