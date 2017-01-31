@@ -54,8 +54,9 @@ angular.module('cumaApp').component('ldapUsersList', {
             DTColumnBuilder.newColumn('co').withTitle('Country').renderWith(function(data) {
                 return data || '';
             }),
-            DTColumnBuilder.newColumn('mail').withTitle('Actions').renderWith(function(data) {
-                return '<a class="btn btn-primary" ng-click="$ctrl.save(' + "'" + data + "'" + ')">Select</a>';
+            DTColumnBuilder.newColumn('mail').withTitle('Actions').renderWith(function(data, type, full) {
+                console.log(full.idx);
+                return '<a class="btn btn-primary" ng-click="$ctrl.save(' + full.idx + ')">Select</a>';
             }).notSortable()
         ];
 
@@ -69,8 +70,15 @@ angular.module('cumaApp').component('ldapUsersList', {
             });
         };
 
+        var addIdxToUsers = function(users) {
+            return users.map(function(u, idx) {
+                u.idx = idx;
+                return u;
+            });
+        };
+
         vm.$onInit = function() {
-            vm.users = filterUsersWithoutName(vm.users);
+            vm.users = addIdxToUsers(filterUsersWithoutName(vm.users));
         };
 
         vm.clear = function() {
@@ -78,21 +86,24 @@ angular.module('cumaApp').component('ldapUsersList', {
             vm.search();
         };
 
+        var findUser = function(idx) {
+            return vm.users.filter(function(u){
+                return u.idx === idx;
+            })[0];
+        };
+
         vm.search = function() {
             LoadingOverlayService.start();
             ldapUsersService.getUsers(vm.searchField).then(function(users) {
-                vm.users = filterUsersWithoutName(users);
+                vm.users = addIdxToUsers(filterUsersWithoutName(users));
                 vm.dtInstance.reloadData();
             }).finally(function() {
                 LoadingOverlayService.stop();
             });
         };
 
-        vm.save = function(userEmail) {
-            var user = vm.users.filter(function(u) {
-                return u.mail === userEmail;
-            })[0];
-
+        vm.save = function(userId) {
+            var user = findUser(userId);
             var dhisUser = {
                 userCredentials: {
                     username: user.mail,
