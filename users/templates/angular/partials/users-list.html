@@ -1,14 +1,21 @@
 {% load i18n %}
 
 <div class="top10">
+    <div class="row" style="text-align: right; margin-bottom: 25px;">
+        <div>
+            <a ui-sref="users.ldap.choice" class="btn btn-primary">Add New User</a>
+        </div>
+    </div>
     <div class="row" id="filters">
         <div class="col-sm-3">
             <div class="form-group">
-                <label>{% trans "Search" %}</label>
+                <label>{% trans "Search Existing Users" %}</label>
                 <div class="input-group">
-                    <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp" ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 1 } }" placeholder="Name, Username"/>
+                    <input id="search" class="form-control" type="text" name="search" ng-model="table.searchFieldTmp"
+                           ui-keypress="{13: 'table.search()'}"
+                           placeholder="Name, Username"/>
                         <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" ng-click="table.searchFieldTmp = ''"><i
+                            <button class="btn btn-secondary" type="button" ng-click="table.clearSearch()"><i
                                     class="glyphicon glyphicon-remove"></i></button>
                         </span>
                 </div>
@@ -61,9 +68,9 @@
                 </ui-select>
             </div>
         </div>
-        <div class="col-sm-1 padding-top22">
+        <div class="col-sm-1 padding-top22" style="text-align: right">
             <div class="row">
-                <button class="btn btn-primary margin-bottom5" ng-click=table.search()>{% trans "Search" %}</button>
+                <button class="btn btn-default margin-bottom5" ng-click="table.search()" style="background: lightgrey">{% trans "Search" %}</button>
             </div>
             <div class="row">
                 <span class="link-target" ng-click="table.clear()">{% trans "Clear all filters" %}</span>

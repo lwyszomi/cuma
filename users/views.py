@@ -13,6 +13,7 @@ import json
 
 from accounts.mixins import LoginRequiredMixin
 from accounts.models import DHIS2User, CometServerConfiguration
+from dhis2.error_codes import ErrorCodes, ERROR_CODES
 from dhis2.utils import get_client
 from users.models import RoleType
 from users.utils import generate_user_view_format, generate_hierarchy, JsonView, user_has_permissions_to_org_unit
@@ -37,6 +38,10 @@ class UsersJsonView(JsonView):
         allowed_users = []
         current_user = queries.get_user(self.request.user.external_id)
         for user in users:
+            if not user['organisationUnits']:
+                allowed_users.append(user)
+                continue
+
             if not any([
                 user_has_permissions_to_org_unit(current_user, org_unit)
                 for org_unit in user['organisationUnits']
@@ -57,6 +62,17 @@ class CountriesJsonView(JsonView):
         return super(CountriesJsonView, self).get_context_data(
             countries=generate_hierarchy(self.request.user.external_id)
         )
+
+
+class LanguagesJsonView(JsonView):
+
+    def get_context_data(self, **kwargs):
+        return {
+            'languages': [
+                {'code': code, 'name': name}
+                for code, name in settings.LANGUAGES
+            ]
+        }
 
 
 class UserProfileJsonView(JsonView):
@@ -86,7 +102,9 @@ class UserProfileJsonView(JsonView):
                 if not user_has_permissions_to_org_unit(current_user, org):
                     continue
                 country_list.append(org)
-                org_dict[org['displayName']] = []
+
+                if org['displayName'] not in org_dict:
+                    org_dict[org['displayName']] = []
 
         roles = {}
         groups = {}
@@ -143,6 +161,14 @@ class UserProfileJsonView(JsonView):
 
 class UserEditData(JsonView):
 
+    def _parse_sector(self, org, display_name):
+        sector = display_name.split('-', 1)
+        if len(sector) == 2:
+            split_first_part = sector[0].split(':')
+            if len(split_first_part) == 2 and org['code'] in split_first_part[1]:
+                return sector[1]
+        return None
+
     def get_context_data(self, **kwargs):
         user_edit = self.request.GET.get('user_id')
         if not user_edit:
@@ -161,12 +187,11 @@ class UserEditData(JsonView):
             if 'code' not in org:
                 continue
             for role in roles:
-                if org['code'] in role['displayName']:
-                    sector = role['displayName'].split('-', 1)
-                    if len(sector) == 2:
-                        split_first_part = sector[0].split(':')
-                        if len(split_first_part) == 2 and org['code'] in split_first_part[1]:
-                            sectors.append(sector[1])
+                if org['code'] not in role['displayName']:
+                    continue
+                sector = self._parse_sector(org, role['displayName'])
+                if sector:
+                    sectors.append(sector)
             org['sectors'] = list(set(sectors))
             user_organisation_units.append(org)
         user_groups = queries.get_user_groups()
@@ -176,6 +201,25 @@ class UserEditData(JsonView):
         kwargs['countryLvl'] = settings.COUNTRY_LEVEL
         kwargs['userGroups'] = user_groups
         return super(UserEditData, self).get_context_data(**kwargs)
+
+
+class LDAPUsersView(JsonView):
+
+    def get_context_data(self, **kwargs):
+        search = self.request.GET.get('search', '')
+        return {
+            'users': queries.get_ldap_users(search)
+        }
+
+
+class LDAPUserView(JsonView):
+
+    def get_context_data(self, **kwargs):
+        email = self.request.GET.get('email')
+        if not email:
+            return {}
+
+        return queries.get_ldap_user(email)
 
 
 class GetRoleView(View):
@@ -220,9 +264,23 @@ class SaveUserView(View):
 
     def post(self, request, *agrs, **kwargs):
         user = json.loads(request.body)
-        response = queries.save_user(user)
+        if user.get('id'):
+            response = queries.save_user(user)
+        else:
+            response = queries.create_user(user)
+
         if response.status_code == 200:
-            return JsonResponse({})
+            response_json = response.json()
+            status = response_json.get('status')
+            if status == 'ERROR':
+                errors = set()
+                for type_report in response_json['typeReports']:
+                    object_report = type_report['objectReports'][0]
+                    for error_report in object_report['errorReports']:
+                        error_code = error_report.get('errorCode')
+                        errors.add(ERROR_CODES.get(error_code, 'Unexpected error'))
+                return JsonResponse({'errors': list(errors)}, status=400)
+            return JsonResponse(user)
         else:
             return JsonResponse(data=response.json(), status=400)
 

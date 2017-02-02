@@ -1,0 +1,29 @@
+{% verbatim %}
+<div>
+    <div class="alert alert-info">
+        We only show first 25 users. Please use search option to get more specific results.
+    </div>
+    <div uib-alert ng-repeat="alert in $ctrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="$ctrl.closeAlert($index)">{{ alert.message }}</div>
+    <div class="row" id="filters">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Search New Users</label>
+                <div class="input-group">
+                    <input id="search" class="form-control" type="text" name="search" ng-model="$ctrl.searchField" ui-keypress="{13: '$ctrl.search()'}" placeholder="First Name, Last Name, email"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" ng-click="$ctrl.clear()"><i
+                                    class="glyphicon glyphicon-remove"></i></button>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1 padding-top22">
+            <div class="row">
+                <button class="btn btn-default margin-bottom5" ng-click="$ctrl.search()" style="background: lightgrey">Search</button>
+            </div>
+        </div>
+    </div>
+    <table datatable="" dt-instance="$ctrl.dtInstanceCallback" dt-options="$ctrl.dtOptions" dt-columns="$ctrl.dtColumnDefs" class="table table-striped">
+    </table>
+</div>
+{% endverbatim %}

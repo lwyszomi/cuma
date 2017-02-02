@@ -116,8 +116,8 @@ su - cuma -s '/bin/bash' -c "source /opt/cuma/venv/bin/activate && /opt/cuma/cod
 psql -U cuma cuma <<EOSQL
 INSERT INTO accounts_cometserverconfiguration(url, username, password)
 VALUES ('$DHIS2_URL',
-        '$DHIS2_SUPERUSER_USERNAME',
-        '$DHIS2_SUPERUSER_PASSWORD');
+        '$DHIS2_SUPERUSER_USERNAME_CUMA',
+        '$DHIS2_SUPERUSER_PASSWORD_CUMA');
 EOSQL
 
 # Start uwsgi and cuma application

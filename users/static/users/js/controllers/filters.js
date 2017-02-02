@@ -100,7 +100,7 @@ angular.module('cumaApp').filter('bySearch', function() {
 }).filter('bySelectedRolesForSector', function() {
     return function(items, type, country, assigned, newRoles) {
         var filteredItems = [];
-        if (type === void(0) || country === void(0)) {
+        if (!type || !country) {
             return items;
         }
         var currentAssigned = assigned.concat(newRoles);

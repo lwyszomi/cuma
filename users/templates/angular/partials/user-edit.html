@@ -44,7 +44,7 @@
                 <div ng-repeat="item in ctrl.roleForms">
                     <div class="box-without-border">
                         <div class="input-group margin-bottom-10">
-                            <ui-select allow-clear ng-model="item.role.selected" on-select="item.sector.selected = undefined; item.country.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" theme="bootstrap">
+                            <ui-select allow-clear ng-model="item.role.selected" on-select="ctrl.onRoleSelect(item)" theme="bootstrap">
                                 <ui-select-match placeholder="Choose role">
                                     {% verbatim %}
                                         {{ $select.selected.name }}
@@ -63,8 +63,7 @@
                                </button>
                             </span>
                         </div>
-
-                        <div ng-show="item.role.selected !== undefined" class="input-group margin-bottom-10">
+                        <div ng-show="item.role.selected !== undefined && item.role.selected.name !== 'Analytics'" class="input-group margin-bottom-10">
                             <ui-select allow-clear ng-model="item.country.selected" on-select="item.sector.selected = undefined; item.show_button=false; item.show_error=false; item.role_exist = false;" theme="bootstrap">
                                 <ui-select-match placeholder="Choose Country">
                                     {% verbatim %}

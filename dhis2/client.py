@@ -23,6 +23,7 @@ class DHIS2Client(object):
         response = requests.get(self.url + 'me.json', params={
             'fields': 'id,firstName,surname,email,userCredentials[username]'
         }, auth=(username, password))
+        print(response.text)
         if response.status_code != 200:
             raise HTTPError(response=response)
         return response.json()
@@ -46,7 +47,7 @@ class DHIS2Client(object):
         session = self.session
         fields = [
             ':all',
-            'userCredentials[disabled,username,userRoles[displayName,id]]',
+            'userCredentials[id,disabled,username,userRoles[displayName,id]]',
             'organisationUnits[displayName,path,level,code,id,ancestors[displayName,path,level,code,id]]',
             'userGroups[id,displayName]',
         ]
@@ -100,9 +101,10 @@ class DHIS2Client(object):
 
     def get_role_by_name(self, filters):
         session = self.session
+        filters = filter(lambda x: bool(x), filters.values())
         groups = session.get(self.url + 'userRoles.json', params={
             'fields': 'displayName,id',
-            'filter': ['displayName:like:%s' % f for f in filters.values()],
+            'filter': ['displayName:like:%s' % f for f in filters],
             'paging': 'false'
         })
         return groups.json()['userRoles']
@@ -132,6 +134,12 @@ class DHIS2Client(object):
         save = session.put(user['href'], data=json.dumps(user), headers=headers)
         return save
 
+    def create_user(self, user):
+        session = self.session
+        headers = {'content-type': 'application/json'}
+        save = session.post(self.url + 'users', data=json.dumps(user), headers=headers)
+        return save
+
     def get_dashboard_role(self):
         session = self.session
         groups = session.get(self.url + 'userRoles.json', params={
@@ -147,7 +155,7 @@ class DHIS2Client(object):
             'id',
             'firstName',
             'surname',
-            'userCredentials[username,userRoles[id]]',
+            'userCredentials[id,username,userRoles[id]]',
             'href'
         ]
         response = session.get(self.url + 'users.json', params={
@@ -156,3 +164,8 @@ class DHIS2Client(object):
             'paging': 'false'
         })
         return response.json()['users']
+
+    def get_system_id(self):
+        response = self.session.get(self.url + 'system/id.json')
+        response.raise_for_status()
+        return response.json()['codes'][0]

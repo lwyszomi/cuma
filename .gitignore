@@ -91,3 +91,5 @@ ENV/
 .idea/
 bower_components/
 /static/
+
+postgresql/

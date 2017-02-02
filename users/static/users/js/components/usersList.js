@@ -153,6 +153,11 @@ angular.module('cumaApp').component('usersList', {
 
         init();
 
+        vm.clearSearch = function() {
+            vm.searchFieldTmp = '';
+            vm.search();
+        };
+
         vm.search = function() {
             assignTmp();
             vm.dtInstance.reloadData();

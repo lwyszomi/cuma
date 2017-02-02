@@ -3,7 +3,7 @@ angular.module('cumaApp').component('userEdit', {
         data: '<',
         step: '<?'
     },
-    controller: function($scope, $http, $state, editConfig, LoadingOverlayService) {
+    controller: function($scope, $http, $state, editConfig, LoadingOverlayService, roleService) {
         var vm = this;
         vm.treeOptions = {multiSelection: true};
         vm.dhis_user = vm.data.dhis_user;
@@ -36,35 +36,58 @@ angular.module('cumaApp').component('userEdit', {
 
         vm.splitOrganisation();
 
+        var getExistingRolesId = function() {
+            return vm.newRoles.concat(vm.dhis_user.userCredentials.userRoles).map(
+                function(item) {
+                    return item.id;
+                }
+            );
+        };
+
+        var isRoleAlreadySelected = function(roleId) {
+            return getExistingRolesId().indexOf(roleId) !== -1;
+        };
+
+        var roleHandler = function(role, item) {
+            if (role.length > 0) {
+                role = role[0];
+                item.show_error = false;
+                if (!isRoleAlreadySelected(role.id)) {
+                    vm.newRoles.push(role);
+                    item.role_exist = false;
+                } else {
+                    item.role_exist = true;
+                }
+                item.show_button = true;
+            } else {
+                item.show_error = true;
+            }
+        };
+
         vm.addRole = function(item) {
             if (item.role !== void(0) && item.country !== void(0) && item.sector !== void(0)) {
                 var role = item.role.selected;
                 var country = item.country.selected;
                 var sector = item.sector.selected;
-                $http({
-                    url: vm.roleUrl,
-                    method: "GET",
-                    params: {
-                        "role_name": role.name,
-                        "country_code": country.code,
-                        "sector": sector
-                    }
-                }).then(function successCallback(response) {
-                    if (response.data['role'].length > 0) {
-                        role = response.data['role'][0];
-                        item.show_error = false;
-                        var ids = vm.newRoles.concat(vm.dhis_user.userCredentials.userRoles).map(function(item, index) { return item.id});
-                        if (ids.indexOf(role.id) === -1) {
-                            vm.newRoles.push(role);
-                            item.role_exist = false;
-                        } else {
-                            item.role_exist = true;
-                        }
-                        item.show_button = true;
-                    } else {
-                        item.show_error = true;
-                    }
-                }, function errorCallback(response) {
+                roleService.getRole(role.name, country.code, sector).then(function (role) {
+                    return roleHandler(role, item);
+                });
+            }
+        };
+
+        vm.onRoleSelect = function(item) {
+            item.country = item.country || {};
+            item.sector = item.sector || {};
+
+            item.country.selected = null;
+            item.sector.selected = null;
+            item.show_button = false;
+            item.show_error = false;
+            item.role_exist = false;
+
+            if (item.role.selected.name === 'Analytics') {
+                roleService.getRole('Analytics', '', '').then(function(role) {
+                    return roleHandler(role, item);
                 });
             }
         };
@@ -148,6 +171,10 @@ angular.module('cumaApp').component('userEdit', {
         };
 
         vm.getSelectedNodes = function() {
+            if (!vm.dhis_user.organisationUnits) {
+                return [];
+            }
+
             var nodes = [];
             vm.organisationUnits.forEach(function(ou) {
                 vm.dhis_user.organisationUnits.forEach(function(orgs) {
@@ -172,7 +199,6 @@ angular.module('cumaApp').component('userEdit', {
         });
 
         vm.goToStep = function goToStep(step) {
-            var groups = vm.dhis_user.userGroups.concat(vm.newGroups);
             var roles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
             var ou = vm.selectedNodes;
             if (roles.length === 0) {
@@ -191,6 +217,7 @@ angular.module('cumaApp').component('userEdit', {
             vm.dhis_user.userCredentials.userRoles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
             vm.dhis_user.userGroups = vm.dhis_user.userGroups.concat(vm.newGroups);
             vm.dhis_user.organisationUnits = vm.selectedNodes;
+            vm.dhis_user.dataViewOrganisationUnits = vm.selectedNodes;
 
             LoadingOverlayService.start();
             $http.post(vm.saveUrl, vm.dhis_user).then(
