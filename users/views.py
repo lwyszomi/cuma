@@ -171,12 +171,15 @@ class UserEditData(JsonView):
 
     def get_context_data(self, **kwargs):
         user_edit = self.request.GET.get('user_id')
-        if not user_edit:
-            raise Http404()
-        user = queries.get_user(user_edit)
+        if user_edit:
+            user = queries.get_user(user_edit)
+        else:
+            user = None
+
+        current_user = queries.get_user(self.request.user.external_id)
+
         organization_units = queries.get_organization_units()
         roles = queries.get_user_roles()
-        current_user = queries.get_user(self.request.user.external_id)
 
         user_organisation_units = []
         for org in organization_units:
@@ -201,6 +204,21 @@ class UserEditData(JsonView):
         kwargs['countryLvl'] = settings.COUNTRY_LEVEL
         kwargs['userGroups'] = user_groups
         return super(UserEditData, self).get_context_data(**kwargs)
+
+
+class UserByUsername(JsonView):
+
+    def get_context_data(self, **kwargs):
+        username = self.request.GET.get('username')
+        if not username:
+            return {}
+
+        user = queries.get_user_by_username(username)['users']
+        if user:
+            user = user[0]
+        else:
+            user = {}
+        return user
 
 
 class LDAPUsersView(JsonView):
@@ -269,6 +287,8 @@ class SaveUserView(View):
         else:
             response = queries.create_user(user)
 
+        print(response.content)
+
         if response.status_code == 200:
             response_json = response.json()
             status = response_json.get('status')
@@ -280,6 +300,9 @@ class SaveUserView(View):
                         error_code = error_report.get('errorCode')
                         errors.add(ERROR_CODES.get(error_code, 'Unexpected error'))
                 return JsonResponse({'errors': list(errors)}, status=400)
+            else:
+                user['id'] = response_json['typeReports'][0]['objectReports'][0]['uid']
+
             return JsonResponse(user)
         else:
             return JsonResponse(data=response.json(), status=400)

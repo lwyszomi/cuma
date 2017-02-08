@@ -56,6 +56,21 @@ class DHIS2Client(object):
         })
         return response.json()
 
+    def get_user_by_username(self, username):
+        session = self.session
+        fields = [
+            ':all',
+            'userCredentials[id,disabled,username,userRoles[displayName,id]]',
+            'organisationUnits[displayName,path,level,code,id,ancestors[displayName,path,level,code,id]]',
+            'userGroups[id,displayName]',
+        ]
+        response = session.get(self.url + 'users.json', params={
+            'fields': ','.join(fields),
+            'filter': 'userCredentials.username:eq:{}'.format(username),
+            'paging': 'false'
+        })
+        return response.json()
+
     def get_organization_units(self):
         session = self.session
         max_level_response = session.get(self.url + 'organisationUnitLevels.json', params={'fields': 'level'})

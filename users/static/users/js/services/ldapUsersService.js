@@ -19,6 +19,20 @@ angular.module('cumaApp').factory('ldapUsersService', function($http, jsonUrls) 
             }).then(function(response) {
                 return response.data;
             });
+        },
+        toDHISUser: function(user) {
+            return {
+                userCredentials: {
+                    username: user.mail,
+                    externalAuth: true,
+                    userRoles: []
+                },
+                surname: user.sn,
+                firstName: user.givenName,
+                email: user.mail,
+                ldapId: user.cn,
+                userGroups: []
+            };
         }
     }
 });

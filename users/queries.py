@@ -14,6 +14,11 @@ def get_user(user_id):
     return dhis_client.get_user(user_id)
 
 
+def get_user_by_username(username):
+    dhis_client = get_client()
+    return dhis_client.get_user_by_username(username)
+
+
 def get_organization_units():
     dhis_client = get_client()
     return dhis_client.get_organization_units()

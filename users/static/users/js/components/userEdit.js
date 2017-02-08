@@ -221,9 +221,10 @@ angular.module('cumaApp').component('userEdit', {
 
             LoadingOverlayService.start();
             $http.post(vm.saveUrl, vm.dhis_user).then(
-                function(successCallback) {
+                function(response) {
+                    var user = response.data;
                     LoadingOverlayService.stop();
-                    $state.go('users.profile', {id: vm.dhis_user.id});
+                    $state.go('users.profile', {id: user.id});
                 }, function() {
                     LoadingOverlayService.stop();
                     alert("Unexpected problem");
