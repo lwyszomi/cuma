@@ -56,6 +56,21 @@ class DHIS2Client(object):
         })
         return response.json()
 
+    def get_user_by_username(self, username):
+        session = self.session
+        fields = [
+            ':all',
+            'userCredentials[id,disabled,username,userRoles[displayName,id]]',
+            'organisationUnits[displayName,path,level,code,id,ancestors[displayName,path,level,code,id]]',
+            'userGroups[id,displayName]',
+        ]
+        response = session.get(self.url + 'users.json', params={
+            'fields': ','.join(fields),
+            'filter': 'userCredentials.username:eq:{}'.format(username),
+            'paging': 'false'
+        })
+        return response.json()
+
     def get_organization_units(self):
         session = self.session
         max_level_response = session.get(self.url + 'organisationUnitLevels.json', params={'fields': 'level'})
@@ -77,7 +92,7 @@ class DHIS2Client(object):
     def get_countries(self):
         session = self.session
         countries = session.get(self.url + 'organisationUnits.json', params={
-            'fields': 'id,level,displayName,code,path',
+            'fields': 'id,level,displayName,code,path,ancestors[id]',
             'filter': 'level:eq:%d' % settings.COUNTRY_LEVEL,
             'paging': 'false'
         })
@@ -108,6 +123,17 @@ class DHIS2Client(object):
             'paging': 'false'
         })
         return groups.json()['userRoles']
+
+    def get_organisation_unit_by_name(self, name):
+        response_json = self.session.get(self.url + 'organisationUnits.json', params={
+            'fields': 'id',
+            'filter': 'name:eq:{}'.format(name),
+            'paging': 'false'
+        }).json()['organisationUnits']
+        if response_json:
+            return response_json[0]
+        else:
+            return None
 
     def get_user_ui_language(self, username):
         response = self.session.get(self.url + 'userSettings/keyUiLocale', params={

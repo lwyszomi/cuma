@@ -171,12 +171,15 @@ class UserEditData(JsonView):
 
     def get_context_data(self, **kwargs):
         user_edit = self.request.GET.get('user_id')
-        if not user_edit:
-            raise Http404()
-        user = queries.get_user(user_edit)
+        if user_edit:
+            user = queries.get_user(user_edit)
+        else:
+            user = None
+
+        current_user = queries.get_user(self.request.user.external_id)
+
         organization_units = queries.get_organization_units()
         roles = queries.get_user_roles()
-        current_user = queries.get_user(self.request.user.external_id)
 
         user_organisation_units = []
         for org in organization_units:
@@ -203,12 +206,51 @@ class UserEditData(JsonView):
         return super(UserEditData, self).get_context_data(**kwargs)
 
 
+class UserByUsername(JsonView):
+
+    def get_context_data(self, **kwargs):
+        username = self.request.GET.get('username')
+        if not username:
+            return {}
+
+        user = queries.get_user_by_username(username)['users']
+        if user:
+            user = user[0]
+        else:
+            user = {}
+        return user
+
+
 class LDAPUsersView(JsonView):
+
+    def _get_countries(self):
+        current_user = queries.get_user(self.request.user.external_id)
+        countries = queries.get_countries()
+        result = set()
+
+        org_units_below_country_level = [
+            org_unit
+            for org_unit in current_user['organisationUnits']
+            if org_unit['level'] > settings.COUNTRY_LEVEL
+        ]
+
+        countries_id_from_orgs_below = set()
+        for org_unit in org_units_below_country_level:
+            countries_id_from_orgs_below = countries_id_from_orgs_below.union([
+                ancestor['id']
+                for ancestor in org_unit['ancestors']
+            ])
+
+        for country in countries:
+            has_permissions = user_has_permissions_to_org_unit(current_user, country)
+            if has_permissions or country['id'] in countries_id_from_orgs_below:
+                result.add(country['displayName'])
+        return result
 
     def get_context_data(self, **kwargs):
         search = self.request.GET.get('search', '')
         return {
-            'users': queries.get_ldap_users(search)
+            'users': queries.get_ldap_users(search, self._get_countries())
         }
 
 
@@ -219,7 +261,13 @@ class LDAPUserView(JsonView):
         if not email:
             return {}
 
-        return queries.get_ldap_user(email)
+        ldap_user = queries.get_ldap_user(email)
+        country = ldap_user.get('co')
+        if country:
+            country_json = queries.get_organisation_unit_by_name(country)
+            if country_json:
+                ldap_user['organisation_unit'] = country_json['id']
+        return ldap_user
 
 
 class GetRoleView(View):
@@ -280,6 +328,9 @@ class SaveUserView(View):
                         error_code = error_report.get('errorCode')
                         errors.add(ERROR_CODES.get(error_code, 'Unexpected error'))
                 return JsonResponse({'errors': list(errors)}, status=400)
+            else:
+                user['id'] = response_json['typeReports'][0]['objectReports'][0]['uid']
+
             return JsonResponse(user)
         else:
             return JsonResponse(data=response.json(), status=400)

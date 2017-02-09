@@ -14,6 +14,11 @@ def get_user(user_id):
     return dhis_client.get_user(user_id)
 
 
+def get_user_by_username(username):
+    dhis_client = get_client()
+    return dhis_client.get_user_by_username(username)
+
+
 def get_organization_units():
     dhis_client = get_client()
     return dhis_client.get_organization_units()
@@ -70,12 +75,22 @@ def get_users_without_role(role_id):
     return dhis_client.get_users_without_role(role_id)
 
 
-def get_ldap_users(search=''):
+def get_organisation_unit_by_name(name):
+    dhis_client = get_client()
+    return dhis_client.get_organisation_unit_by_name(name)
+
+
+def get_ldap_users(search='', countries=None):
+    if not countries:
+        return []
+    else:
+        countries_filter = u''.join([u'(co={})'.format(country) for country in countries])
     ldap_client = get_default_ldap_client()
     if not search:
-        query = 'objectClass=user'
+        query = u'(&(objectClass=user)(|{}))'.format(countries_filter)
     else:
-        query = '(|(mail={0}*)(sn={0}*)(givenName={0}*)(name={0}*))'.format(search)
+        query = u'(&(|(mail={0}*)(sn={0}*)(givenName={0}*)(name={0}*))(|{1}))'.format(search, countries_filter)
+    query = query.encode('utf-8')
     return ldap_client.run_query(query, ['mail', 'cn', 'sn', 'givenName', 'name', 'title', 'co'])
 
 
@@ -84,7 +99,7 @@ def get_ldap_user(email):
     try:
         return ldap_client.run_query(
             '(&(objectClass=user)(mail={}))'.format(email),
-            ['mail', 'cn', 'sn', 'givenName']
+            ['mail', 'cn', 'sn', 'givenName', 'co']
         )[0]
     except IndexError:
         return None
