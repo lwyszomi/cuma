@@ -2,13 +2,11 @@ angular.module('cumaApp').component('ldapUsersList', {
     templateUrl: function(partialsUrl) {
         return partialsUrl.ldapUsers;
     },
-    bindings: {
-        users: '<'
-    },
     controller: function($scope, $compile, $state, DTOptionsBuilder, DTDefaultOptions,
-                         DTColumnBuilder, $q, editConfig, LoadingOverlayService, $http, ldapUsersService) {
+                         DTColumnBuilder, $q, editConfig, LoadingOverlayService, $http, ldapUsersService, jsonUrls) {
         var vm = this;
 
+        vm.users = [];
         vm.alerts = [];
 
         vm.dtInstance = {};
@@ -55,14 +53,13 @@ angular.module('cumaApp').component('ldapUsersList', {
                 return data || '';
             }),
             DTColumnBuilder.newColumn('mail').withTitle('Actions').renderWith(function(data, type, full) {
-                console.log(full.idx);
                 return '<a class="btn btn-primary" ng-click="$ctrl.save(' + full.idx + ')">Select</a>';
             }).notSortable()
         ];
 
         DTDefaultOptions
-            .setDOM('<li<t>p>')
-            .setOption('language', {"sLengthMenu":  "_MENU_", 'sInfo': ''});
+            .setDOM('<l<t>p>')
+            .setOption('language', {"sLengthMenu":  "", 'sInfo': ''});
 
         var filterUsersWithoutName = function(users) {
             return users.filter(function(u) {
@@ -77,10 +74,6 @@ angular.module('cumaApp').component('ldapUsersList', {
             });
         };
 
-        vm.$onInit = function() {
-            vm.users = addIdxToUsers(filterUsersWithoutName(vm.users));
-        };
-
         vm.clear = function() {
             vm.searchField = '';
             vm.search();
@@ -92,11 +85,21 @@ angular.module('cumaApp').component('ldapUsersList', {
             })[0];
         };
 
+        vm.initiated = false;
+
         vm.search = function() {
             LoadingOverlayService.start();
             ldapUsersService.getUsers(vm.searchField).then(function(users) {
                 vm.users = addIdxToUsers(filterUsersWithoutName(users));
-                vm.dtInstance.reloadData();
+                vm.users.forEach(function(u) {
+                    u.mail = u.mail.toLowerCase();
+                });
+                if (vm.initiated) {
+                    vm.dtInstance.reloadData();
+                } else {
+                    vm.initiated = true;
+                }
+
             }).finally(function() {
                 LoadingOverlayService.stop();
             });
@@ -104,32 +107,21 @@ angular.module('cumaApp').component('ldapUsersList', {
 
         vm.save = function(userId) {
             var user = findUser(userId);
-            var dhisUser = {
-                userCredentials: {
-                    username: user.mail,
-                    externalAuth: true
-                },
-                surname: user.sn || 'surname',
-                firstName: user.givenName || 'firstname',
-                email: user.mail,
-                ldapId: user.cn
-            };
-
             LoadingOverlayService.start();
-            $http.post(editConfig.saveUrl, dhisUser).then(
-                function(response) {
-                    LoadingOverlayService.stop();
-                    var user = response.data;
-                    $state.go('users.edit', {id: user.id, step: 1});
-                }, function(response) {
-                    var errors = response.data.errors;
-                    vm.alerts = [];
-                    errors.forEach(function(e) {
-                        vm.addAlert(e, 'danger');
-                    });
-                    LoadingOverlayService.stop();
+            $http.get(jsonUrls.userByUsername, {
+                params: {
+                    username: user.mail
                 }
-            );
+            }).then(function(response) {
+                if (response.data.id) {
+                    vm.alerts = [];
+                    vm.addAlert('User already exists.', 'danger')
+                } else {
+                    $state.go('users.ldap.editData', {email: user.mail, step: 1});
+                }
+            }).finally(function() {
+                LoadingOverlayService.stop();
+            });
         };
 
         function serverData() {

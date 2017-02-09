@@ -26,6 +26,11 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, 
     text-overflow: ellipsis;
 }
 
+
+.ui-select-bootstrap .ui-select-match-text span {
+    display: inline !important;
+}
+
 table.table thead .sorting_asc:before {
     display: none !important;
 }

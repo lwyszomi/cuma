@@ -199,16 +199,15 @@ angular.module('cumaApp').component('userEdit', {
         });
 
         vm.goToStep = function goToStep(step) {
-            var roles = vm.dhis_user.userCredentials.userRoles.concat(vm.newRoles);
             var ou = vm.selectedNodes;
-            if (roles.length === 0) {
-                step = 2;
+            var nextStep = step;
+
+            if (step > 1 && ou.length === 0) {
+                nextStep = 1
             }
-            if (ou.length === 0) {
-                step = 1
-            }
+
             vm.getCountries();
-            vm.activeStep = step;
+            vm.activeStep = nextStep;
         };
 
         vm.goToStep(vm.step);
@@ -221,9 +220,10 @@ angular.module('cumaApp').component('userEdit', {
 
             LoadingOverlayService.start();
             $http.post(vm.saveUrl, vm.dhis_user).then(
-                function(successCallback) {
+                function(response) {
+                    var user = response.data;
                     LoadingOverlayService.stop();
-                    $state.go('users.profile', {id: vm.dhis_user.id});
+                    $state.go('users.profile', {id: user.id});
                 }, function() {
                     LoadingOverlayService.stop();
                     alert("Unexpected problem");

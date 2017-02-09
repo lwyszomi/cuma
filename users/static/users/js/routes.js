@@ -64,12 +64,7 @@ angular.module('cumaApp').config(function($stateProvider, $urlRouterProvider) {
         })
         .state('users.ldap.choice', {
             url: '/',
-            resolve: {
-                users: function($q, $http, jsonUrls, ldapUsersService) {
-                    return ldapUsersService.getUsers();
-                }
-            },
-            template: '<ldap-users-list users="$resolve.users"></ldap-users-list>'
+            template: '<ldap-users-list></ldap-users-list>'
         })
         .state('users.ldap.edit', {
             url: '/{email}',
@@ -82,5 +77,22 @@ angular.module('cumaApp').config(function($stateProvider, $urlRouterProvider) {
                 }
             },
             template: '<ldap-user-edit user="$resolve.user" languages="$resolve.languages"></ldap-user-edit>'
-        });
+        })
+        .state('users.ldap.editData', {
+            url: '/edit/{email}/{step}',
+            resolve: {
+                editData: function($http, $q, $stateParams, jsonUrls, ldapUsersService) {
+                    return $q.all([
+                        $http.get(jsonUrls.userEdit, {params: {user_id: $stateParams.id}}),
+                        ldapUsersService.getUser($stateParams.email)
+                    ]).then(function(response) {
+                        var editData = response[0].data;
+                        var ldapUser = response[1];
+                        editData.dhis_user = ldapUsersService.toDHISUser(ldapUser);
+                        return editData;
+                    });
+                }
+            },
+            template: '<user-edit step="$resolve.stateParams.step" data="$resolve.editData"></user-edit>'
+        })
 });

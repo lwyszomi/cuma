@@ -1,5 +1,8 @@
 {% verbatim %}
 <div>
+    <div class="top10" style="margin-bottom: 10px;">
+        <a class="nav-link" ui-sref="users.list"><i class="glyphicon glyphicon-chevron-left"></i><span>User Management</span></a>
+    </div>
     <div class="alert alert-info">
         We only show first 25 users. Please use search option to get more specific results.
     </div>
@@ -23,7 +26,7 @@
             </div>
         </div>
     </div>
-    <table datatable="" dt-instance="$ctrl.dtInstanceCallback" dt-options="$ctrl.dtOptions" dt-columns="$ctrl.dtColumnDefs" class="table table-striped">
+    <table ng-if="$ctrl.initiated" datatable="" dt-instance="$ctrl.dtInstanceCallback" dt-options="$ctrl.dtOptions" dt-columns="$ctrl.dtColumnDefs" class="table table-striped">
     </table>
 </div>
 {% endverbatim %}
