@@ -3,9 +3,6 @@
     <div class="top10" style="margin-bottom: 10px;">
         <a class="nav-link" ui-sref="users.list"><i class="glyphicon glyphicon-chevron-left"></i><span>User Management</span></a>
     </div>
-    <div class="alert alert-info">
-        We only show first 25 users. Please use search option to get more specific results.
-    </div>
     <div uib-alert ng-repeat="alert in $ctrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="$ctrl.closeAlert($index)">{{ alert.message }}</div>
     <div class="row" id="filters">
         <div class="col-sm-4">

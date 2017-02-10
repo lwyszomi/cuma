@@ -25,12 +25,12 @@ angular.module('cumaApp').factory('ldapUsersService', function($http, jsonUrls) 
                 userCredentials: {
                     username: user.mail.toLowerCase(),
                     externalAuth: true,
-                    userRoles: []
+                    userRoles: [],
+                    ldapId: user.cn
                 },
                 surname: user.sn,
                 firstName: user.givenName,
                 email: user.mail.toLowerCase(),
-                ldapId: user.cn,
                 userGroups: [],
                 organisationUnits: (user.organisation_unit ? [{id: user.organisation_unit}] : [])
             };
