@@ -14,7 +14,7 @@ angular.module('cumaApp').component('ldapUserEdit', {
                 userCredentials: {
                     id: null,
                     username: vm.user.mail,
-                    password: null,
+                    password: 'Default12', // workaround
                     externalAuth: true
                 },
                 surname: vm.user.sn,
