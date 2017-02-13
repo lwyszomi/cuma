@@ -248,7 +248,14 @@ class LDAPUsersView(JsonView):
         return result
 
     def get_context_data(self, **kwargs):
+        current_user = queries.get_user(self.request.user.external_id)
         search = self.request.GET.get('search', '')
+
+        for org_unit in current_user['organisationUnits']:
+            if org_unit['displayName'] == 'IRC Global':
+                return {
+                    'users': queries.get_ldap_users(search, all_countries=True)
+                }
         return {
             'users': queries.get_ldap_users(search, self._get_countries())
         }

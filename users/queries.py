@@ -80,8 +80,10 @@ def get_organisation_unit_by_name(name):
     return dhis_client.get_organisation_unit_by_name(name)
 
 
-def get_ldap_users(search='', countries=None):
-    if not countries:
+def get_ldap_users(search='', countries=None, all_countries=False):
+    if all_countries:
+        countries_filter = '(co=*)'
+    elif not countries:
         return []
     else:
         countries_filter = u''.join([u'(co={})'.format(country) for country in countries])
