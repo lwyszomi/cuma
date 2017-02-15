@@ -24,6 +24,7 @@ angular.module('cumaApp').factory('ldapUsersService', function($http, jsonUrls) 
             return {
                 userCredentials: {
                     username: user.mail.toLowerCase(),
+                    password: 'Default12', // workaround
                     externalAuth: true,
                     userRoles: [],
                     ldapId: user.cn
